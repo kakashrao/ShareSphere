@@ -1,0 +1,20 @@
+{
+    "git.autofetch": "all",
+    "git.enableSmartCommit": true,
+    "git.fetchOnPull": true,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 3000,
+    "diffEditor.ignoreTrimWhitespace": true,
+    "eslint.nodePath": "./share-sphere",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.renderWhitespace": "trailing",
+    "typescript.referencesCodeLens.enabled": true,
+    "typescript.referencesCodeLens.showOnAllFunctions": true,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}

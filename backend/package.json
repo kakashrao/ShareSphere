@@ -1,0 +1,25 @@
+{
+  "name": "share_sphere",
+  "version": "1.0.0",
+  "description": "An app for one to share posts and make comments.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "social",
+    "posts",
+    "comments"
+  ],
+  "author": "Akash",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.3.0"
+  }
+}
