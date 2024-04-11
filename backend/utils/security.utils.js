@@ -10,14 +10,14 @@ const RSA_PUBLIC_KEY = fs.readFileSync("../keys/public.key");
 
 const SESSION_DURATION = 240;
 
-export const createSessionToken = async (userId, email) => {
+export const createJWT = async (userId, email) => {
   return signJwt({ userId, email }, RSA_PRIVATE_KEY, {
     algorithm: "RS256",
     expiresIn: SESSION_DURATION,
   });
 };
 
-export const verifySessionToken = (token) => {  
+export const verifyJWT = (token) => {
   const decodedToken = jwt.verify(token, RSA_PUBLIC_KEY);
   return decodedToken;
 };

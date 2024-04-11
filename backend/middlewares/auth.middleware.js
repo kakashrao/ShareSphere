@@ -1,8 +1,8 @@
-import ApiError from "../utils/apiError";
+import ApiError from "../utils/apiError.utils.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
-import { verifySessionToken } from "../utils/security.utils.js";
+import { verifyJWT } from "../utils/security.utils.js";
 
-const verifyToken = asyncHandler(async (req, res, next) => {
+const validateJWT = asyncHandler(async (req, res, next) => {
   const token = req.cookies?.accessToken;
 
   if (!token) {
@@ -10,11 +10,11 @@ const verifyToken = asyncHandler(async (req, res, next) => {
     return;
   }
 
-  const decodedToken = verifySessionToken(token);
+  const decodedToken = verifyJWT(token);
 
   if (decodedToken) {
     const user = {
-      userId: decodedToken?.id,
+      userId: decodedToken?.userId,
       email: decodedToken?.email,
     };
 

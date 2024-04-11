@@ -1,6 +1,6 @@
-import { ApiError } from "./apiError";
+import ApiError from "./apiError.utils.js";
 
-export const asyncHandler = (fn) => async (req, res, next) => {
+const asyncHandler = (fn) => async (req, res, next) => {
   try {
     await fn(req, res, next);
   } catch (error) {
@@ -10,3 +10,5 @@ export const asyncHandler = (fn) => async (req, res, next) => {
     res.send(statusCode).json(new ApiError(statusCode, message));
   }
 };
+
+export default asyncHandler;
