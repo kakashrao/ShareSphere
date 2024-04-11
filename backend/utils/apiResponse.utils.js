@@ -1,5 +1,5 @@
 export default class ApiResponse {
-  constructor(statuCode, data, message = "Success") {
+  constructor(statusCode, data, message = "Success") {
     this.statuCode = statusCode;
     this.data = data;
     this.message = message;
