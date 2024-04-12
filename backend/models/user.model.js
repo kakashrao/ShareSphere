@@ -58,7 +58,9 @@ userSchema.post("save", (error, doc, next) => {
     if (error.keyValue["username"]) {
       next(new ApiError(400, "User name already exists."));
     } else if (error.keyValue["email"]) {
-      next(new ApiError(400, "Email already exists"));
+      next(new ApiError(400, "Email already exists."));
+    } else {
+      next(new ApiError(500, "Something went wrong."));
     }
   } else if (error instanceof MongooseError) {
     if (error?.errors) {
@@ -66,6 +68,8 @@ userSchema.post("save", (error, doc, next) => {
         next(new ApiError(400, error.errors[key].message));
         break;
       }
+    } else {
+      next(new ApiError(500, "Something went wrong."));
     }
   } else {
     next();
