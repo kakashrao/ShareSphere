@@ -8,12 +8,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-export const uploadOnCLoudinary = async (localFilePath) => {
+const uploadOnCLoudinary = async (localFilePath, folder) => {
   try {
     if (!localFilePath) return null;
 
     const response = await cloudinary.uploader.upload(localFilePath, {
-      folder: "share-sphere",
+      folder: `share-sphere/${folder}`,
       resource_type: "auto",
     });
 
@@ -24,3 +24,5 @@ export const uploadOnCLoudinary = async (localFilePath) => {
     return null;
   }
 };
+
+export { uploadOnCLoudinary };

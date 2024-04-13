@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.route("/register").post(
   upload.fields([
-    { name: "userImage", maxCount: 1 },
+    { name: "profileImage", maxCount: 1 },
     { name: "coverImage", maxCount: 1 },
   ]),
   registerUser

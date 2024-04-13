@@ -6,6 +6,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
 const randomBytes = util.promisify(crypto.randomBytes);
+const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
 export const signJwt = util.promisify(jwt.sign);
 
@@ -26,4 +27,8 @@ const verifyJWT = (token) => {
   return payload;
 };
 
-export { createJWT, randomBytes, verifyJWT };
+const isValidEmail = (email) => {
+  return emailRegex.test(email);
+};
+
+export { createJWT, isValidEmail, randomBytes, verifyJWT };

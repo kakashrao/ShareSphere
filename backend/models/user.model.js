@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     username: {
       type: String,
       required: [true, "Username is required."],
-      unique: [true, "username should be unique."],
+      unique: true,
     },
     fullName: {
       type: String,
@@ -18,6 +18,12 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Email is required."],
       unique: true,
+      validate: {
+        validator: function (v) {
+          return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
+      },
     },
     bio: {
       type: String,
