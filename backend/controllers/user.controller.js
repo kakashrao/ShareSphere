@@ -6,6 +6,11 @@ import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
 import { createJWT } from "../utils/security.utils.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
+  if (!req || !req.body) {
+    res.status(400).json(new ApiError(400, "Bad Request"));
+    return;
+  }
+
   const user = new User(req.body);
 
   if (req?.files?.profileImage?.[0]?.path) {
@@ -31,13 +36,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     const token = await createJWT(createdUser._id, createdUser.email);
 
     const data = {
-      userId: createdUser._id,
-      fullName: createdUser.fullName,
-      email: createdUser.email,
-      profileImage: createdUser.profileImage ?? "",
-      coverImage: createdUser.coverImage ?? "",
-      createdAt: createdUser.createdAt,
-      updatedAt: createdUser.updatedAt,
+      ...formatUser(createdUser),
       token,
     };
 
@@ -52,3 +51,64 @@ export const registerUser = asyncHandler(async (req, res) => {
     }
   }
 });
+
+export const loginUser = asyncHandler(async (req, res) => {
+  if (!req || !req.body) {
+    res.status(400).json(new ApiError(400, "Bad Request"));
+    return;
+  }
+
+  if (!req.body?.id) {
+    res
+      .status(400)
+      .json(new ApiError(400, "Please provide email or username."));
+    return;
+  }
+
+  if (!req.body?.password) {
+    res.status(400).json(new ApiError(400, "Please provide a valid password."));
+    return;
+  }
+
+  const user = await User.findOne({
+    $or: [{ username: req.body?.id }, { email: req.body?.id }],
+  });
+
+  if (user) {
+    const isPasswordCorrect = await user.isPasswordCorrect(req.body.password);
+
+    if (isPasswordCorrect) {
+      const token = await createJWT(user._id, user.email);
+
+      const data = {
+        ...formatUser(user),
+        token,
+      };
+
+      res
+        .status(200)
+        .json(new ApiResponse(200, data, "Successfully Logged In."));
+    } else {
+      res.status(401).json(new ApiError(401, "Invalid credentials."));
+    }
+  } else {
+    res
+      .status(404)
+      .json(new ApiError(404, "Account not found, please register yourself."));
+  }
+});
+
+/* Common methods below */
+
+const formatUser = (user) => {
+  return {
+    userId: user._id,
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email,
+    profileImage: user.profileImage ?? "",
+    coverImage: user.coverImage ?? "",
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+};
