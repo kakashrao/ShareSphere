@@ -98,6 +98,35 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+export const getUserDetails = asyncHandler(async (req, res) => {
+  if (!req?.user || !req?.user?.userId) {
+    res.status(403).json(new ApiError(403, "Authorization Failed."));
+    return;
+  }
+
+  try {
+    const user = await User.findOne({ _id: req.user.userId });
+
+    if (user) {
+      const data = {
+        ...formatUser(user),
+      };
+
+      res.status(200).json(new ApiResponse(200, data, "Successfully fetched."));
+    } else {
+      res.status(404).json(new ApiError(404, "User not found."));
+    }
+    return;
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        new ApiError(400, error?.message ?? "Failed to fetch user details.")
+      );
+    return;
+  }
+});
+
 /* Common methods below */
 
 const formatUser = (user) => {

@@ -1,12 +1,12 @@
 import ApiError from "../utils/apiError.utils.js";
-import { asyncHandler } from "../utils/asyncHandler.utils.js";
+import asyncHandler from "../utils/asyncHandler.utils.js";
 import { verifyJWT } from "../utils/security.utils.js";
 
-const validateJWT = asyncHandler(async (req, res, next) => {
-  const token = req.cookies?.accessToken;
+export const checkAuth = asyncHandler(async (req, res, next) => {
+  const token = req.headers?.authorization;
 
   if (!token) {
-    res.send(401).json(new ApiError(401, "Authorization Failed"));
+    res.status(401).json(new ApiError(401, "Authorization Failed"));
     return;
   }
 
@@ -21,6 +21,7 @@ const validateJWT = asyncHandler(async (req, res, next) => {
     req.user = { ...user };
     next();
   } else {
-    res.send(401).json(new ApiError(401, "Authorization Failed"));
+    res.status(401).json(new ApiError(401, "Authorization Failed"));
+    return;
   }
 });
