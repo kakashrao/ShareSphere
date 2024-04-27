@@ -15,7 +15,13 @@ export const uploadMedia = asyncHandler(async (req, res) => {
     for (const file of files) {
       try {
         const response = await uploadOnCLoudinary(file.path, folder);
-        response?.url ? result.push(response?.url) : null;
+        response?.url
+          ? result.push({
+              url: response?.url,
+              format: response?.format,
+              fileName: response?.original_filename,
+            })
+          : null;
       } catch (error) {}
     }
 

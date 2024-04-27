@@ -1,7 +1,8 @@
-import mongoose, { MongooseError } from "mongoose";
+import mongoose from "mongoose";
 
 import argon2 from "argon2";
 import ApiError from "../utils/apiError.utils.js";
+import handleError from "../utils/errorHandler.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -60,7 +61,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.post("save", (error, doc, next) => {
-  if (error.name === "MongoServerError" && error.code === 11000) {
+  if (error?.name === "MongoServerError" && error?.code === 11000) {
     if (error.keyValue["username"]) {
       next(new ApiError(400, "User name already exists."));
     } else if (error.keyValue["email"]) {
@@ -68,15 +69,8 @@ userSchema.post("save", (error, doc, next) => {
     } else {
       next(new ApiError(500, "Something went wrong."));
     }
-  } else if (error instanceof MongooseError) {
-    if (error?.errors) {
-      for (const key in error.errors) {
-        next(new ApiError(400, error.errors[key].message));
-        break;
-      }
-    } else {
-      next(new ApiError(500, "Something went wrong."));
-    }
+  } else if (error) {
+    next(handleError(error));
   } else {
     next();
   }

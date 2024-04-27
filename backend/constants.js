@@ -6,3 +6,16 @@ export const SecurityConst = Object.freeze({
 
 export const dateFormat = "YYYY-MM-DD";
 export const dateTimeFormat = "YYYY-MM-DD-HH-mm-ss";
+
+export const ImageFormats = [
+  "gif",
+  "png",
+  "jpg",
+  "ico",
+  "webp",
+  "svg",
+  "webm",
+  "heic",
+];
+
+export const videoFormats = ["mkv", "mp4", "webm"];

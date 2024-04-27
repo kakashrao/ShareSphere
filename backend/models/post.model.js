@@ -1,4 +1,14 @@
-import mongoose, { MongooseError } from "mongoose";
+import mongoose from "mongoose";
+import handleError from "../utils/errorHandler.js";
+
+const mediaSchema = mongoose.Schema(
+  {
+    url: String,
+    fileName: String,
+    format: String,
+  },
+  { _id: false }
+);
 
 const postSchema = mongoose.Schema(
   {
@@ -10,7 +20,7 @@ const postSchema = mongoose.Schema(
       type: String,
       default: "",
     },
-    mediaFiles: [String],
+    media: [mediaSchema],
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -25,15 +35,8 @@ const postSchema = mongoose.Schema(
 );
 
 postSchema.post("save", (error, doc, next) => {
-  if (error instanceof MongooseError) {
-    if (error?.errors) {
-      for (const key in error.errors) {
-        next(new ApiError(400, error.errors[key].message));
-        break;
-      }
-    } else {
-      next(new ApiError(500, "Something went wrong, while saving post."));
-    }
+  if (error) {
+    next(handleError(error));
   } else {
     next();
   }

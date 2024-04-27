@@ -1,4 +1,4 @@
-import { SecurityConst } from "../constants.js";
+import { ImageFormats, SecurityConst } from "../constants.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
@@ -19,7 +19,9 @@ export const registerUser = asyncHandler(async (req, res) => {
       const profileImage = await uploadOnCLoudinary(
         req.files.profileImage[0].path,
         "users",
-        ["gif", "png", "jpg", "svg", "heic"]
+        req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+          ? []
+          : ImageFormats
       );
 
       user.profileImage = profileImage?.url ?? "";
@@ -29,7 +31,9 @@ export const registerUser = asyncHandler(async (req, res) => {
       const coverImage = await uploadOnCLoudinary(
         req.files.coverImage[0].path,
         "users",
-        ["gif", "png", "jpg", "svg", "heic"]
+        req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+          ? []
+          : ImageFormats
       );
 
       user.coverImage = coverImage?.url ?? "";

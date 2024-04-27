@@ -7,7 +7,7 @@ const asyncHandler = (fn) => async (req, res, next) => {
     const statusCode = error?.code || 500;
     const message = error?.message || "Something went wrong";
 
-    res.send(statusCode).json(new ApiError(statusCode, message));
+    res.status(statusCode).json(new ApiError(statusCode, message));
   }
 };
 
