@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.route("/create").post(checkAuth, upload.array("media"), createPost);
 
-router.route("/update").post(checkAuth, updatePost);
+router
+  .route("/update/:postId")
+  .put(checkAuth, upload.array("media"), updatePost);
 
 export default router;
