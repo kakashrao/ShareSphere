@@ -1,25 +1,20 @@
-import mongoose from "mongoose";
-
-const postImageSchema = mongoose.Schema({
-  url: String,
-  fileName: String,
-});
+import mongoose, { MongooseError } from "mongoose";
 
 const postSchema = mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, "Title is required."],
     },
     description: {
       type: String,
-      required: true,
+      default: "",
     },
-    images: [postImageSchema],
+    mediaFiles: [String],
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: [true, "Invalid user."],
     },
     likes: {
       type: Number,
@@ -28,6 +23,21 @@ const postSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+postSchema.post("save", (error, doc, next) => {
+  if (error instanceof MongooseError) {
+    if (error?.errors) {
+      for (const key in error.errors) {
+        next(new ApiError(400, error.errors[key].message));
+        break;
+      }
+    } else {
+      next(new ApiError(500, "Something went wrong, while saving post."));
+    }
+  } else {
+    next();
+  }
+});
 
 const Post = mongoose.model("Post", postSchema);
 

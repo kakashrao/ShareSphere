@@ -1,7 +1,7 @@
 import multer from "multer";
 
 import moment from "moment";
-import { dateFormat } from "../constants.js";
+import { dateTimeFormat } from "../constants.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const fileNameSplit = file.originalname?.split(".");
-    const fileName = `${fileNameSplit?.[0]}_${moment().format(dateFormat)}.${fileNameSplit?.[1]}`;
+    const fileName = `${fileNameSplit?.[0]?.substring(0, 15)}_${moment().format(dateTimeFormat)}.${fileNameSplit?.[fileNameSplit.length - 1]}`;
     cb(null, fileName);
   },
 });

@@ -1,9 +1,10 @@
+import { SecurityConst } from "../constants.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
-import { createJWT } from "../utils/security.utils.js";
+import { createCsrfToken, createJWT } from "../utils/security.utils.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
@@ -13,32 +14,37 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const user = new User(req.body);
 
-  if (req?.files?.profileImage?.[0]?.path) {
-    const profileImage = await uploadOnCLoudinary(
-      req.files.profileImage[0].path,
-      "users"
-    );
-
-    user.profileImage = profileImage?.url ?? "";
-  }
-
-  if (req?.files?.coverImage?.[0]?.path) {
-    const coverImage = await uploadOnCLoudinary(
-      req.files.coverImage[0].path,
-      "users"
-    );
-
-    user.coverImage = coverImage?.url ?? "";
-  }
-
   try {
+    if (req?.files?.profileImage?.[0]?.path) {
+      const profileImage = await uploadOnCLoudinary(
+        req.files.profileImage[0].path,
+        "users",
+        ["gif", "png", "jpg", "svg", "heic"]
+      );
+
+      user.profileImage = profileImage?.url ?? "";
+    }
+
+    if (req?.files?.coverImage?.[0]?.path) {
+      const coverImage = await uploadOnCLoudinary(
+        req.files.coverImage[0].path,
+        "users",
+        ["gif", "png", "jpg", "svg", "heic"]
+      );
+
+      user.coverImage = coverImage?.url ?? "";
+    }
+
     const createdUser = await user.save();
-    const token = await createJWT(createdUser._id, createdUser.email);
+    const accessToken = await createJWT(createdUser._id, createdUser.email);
+    const csrfToken = await createCsrfToken();
 
     const data = {
       ...formatUser(createdUser),
-      token,
     };
+
+    res.cookie(SecurityConst.sessionId, accessToken);
+    res.cookie(SecurityConst.csrfTokenServer, csrfToken);
 
     res
       .status(200)
@@ -78,12 +84,15 @@ export const loginUser = asyncHandler(async (req, res) => {
     const isPasswordCorrect = await user.isPasswordCorrect(req.body.password);
 
     if (isPasswordCorrect) {
-      const token = await createJWT(user._id, user.email);
+      const accessToken = await createJWT(user._id, user.email);
+      const csrfToken = await createCsrfToken();
 
       const data = {
         ...formatUser(user),
-        token,
       };
+
+      res.cookie(SecurityConst.sessionId, accessToken);
+      res.cookie(SecurityConst.csrfTokenServer, csrfToken);
 
       res
         .status(200)

@@ -27,8 +27,12 @@ const verifyJWT = (token) => {
   return payload;
 };
 
+const createCsrfToken = async () => {
+  return await randomBytes(32).then((bytes) => bytes.toString("hex"));
+};
+
 const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
-export { createJWT, isValidEmail, randomBytes, verifyJWT };
+export { createCsrfToken, createJWT, isValidEmail, randomBytes, verifyJWT };

@@ -17,8 +17,10 @@ app.use(express.static("./public"));
 app.use(cookieParser());
 
 // Routes Imports
+import postRoutes from "./routes/post.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 app.use("/user", userRoutes);
+app.use("/post", postRoutes);
 
 export default app;
