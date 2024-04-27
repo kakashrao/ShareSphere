@@ -18,9 +18,11 @@ app.use(cookieParser());
 
 // Routes Imports
 import postRoutes from "./routes/post.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 app.use("/user", userRoutes);
 app.use("/post", postRoutes);
+app.use("/assets", uploadRoutes);
 
 export default app;

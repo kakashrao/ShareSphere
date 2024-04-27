@@ -40,11 +40,14 @@ const uploadOnCLoudinary = async (
   }
 };
 
-const deleteFromCloudinary = async (file) => {
+const deleteFromCloudinary = async (folder, filename) => {
   try {
-    const response = await cloudinary.uploader.destroy(file, {
-      invalidate: true,
-    });
+    const response = await cloudinary.uploader.destroy(
+      `share-sphere/${folder}/${filename}`,
+      {
+        invalidate: true,
+      }
+    );
 
     if (response["result"] === "ok") {
       return true;
