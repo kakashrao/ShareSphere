@@ -32,29 +32,21 @@ export const createPost = asyncHandler(async (req, res) => {
 
   const post = new Post({ ...req.body, creator: req.user.userId });
 
-  try {
-    const savedPost = await post.save();
-    if (savedPost) {
-      res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            formatPost(savedPost),
-            "Post Created Successfully."
-          )
-        );
-    } else {
-      res
-        .status(500)
-        .json(new ApiError(500, "Failed to create post, please try again."));
-    }
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.statusCode).json(error);
-    } else {
-      res.status(500).json(new ApiError(500, "Something went wrong"));
-    }
+  const savedPost = await post.save();
+  if (savedPost) {
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          formatPost(savedPost),
+          "Post Created Successfully."
+        )
+      );
+  } else {
+    res
+      .status(500)
+      .json(new ApiError(500, "Failed to create post, please try again."));
   }
 });
 
@@ -98,33 +90,51 @@ export const updatePost = asyncHandler(async (req, res) => {
     return;
   }
 
-  post.title = req.body.title;
-  post.description = req.body.description;
-  post.media = req.body.media;
+  post.title = req.body?.title ?? "";
+  post.description = req.body?.description ?? "";
+  post.media = req.body?.media ?? [];
 
-  try {
-    const updatedPost = await post.save();
-    if (updatedPost) {
-      res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            formatPost(updatedPost),
-            "Post Updated Successfully."
-          )
-        );
-    } else {
-      res
-        .status(500)
-        .json(new ApiError(500, "Failed to update post, please try again."));
-    }
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.statusCode).json(error);
-    } else {
-      res.status(500).json(new ApiError(500, "Something went wrong"));
-    }
+  const updatedPost = await post.save();
+  if (updatedPost) {
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          formatPost(updatedPost),
+          "Post Updated Successfully."
+        )
+      );
+  } else {
+    res
+      .status(500)
+      .json(new ApiError(500, "Failed to update post, please try again."));
+  }
+});
+
+export const getPostDetails = asyncHandler(async (req, res) => {
+  if (!req.params?.postId) {
+    res.status(400).json(new ApiError(400, "Invalid Request."));
+    return;
+  }
+
+  const post = await Post.findById(req.params.postId).populate(
+    "creator",
+    "fullName profileImage"
+  );
+
+  if (post) {
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          formatPost(post),
+          "Post Details Fetched Successfully."
+        )
+      );
+  } else {
+    res.status(404).json(new ApiError(404, "Post not found."));
   }
 });
 

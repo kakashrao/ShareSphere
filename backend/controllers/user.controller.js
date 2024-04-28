@@ -14,52 +14,42 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const user = new User(req.body);
 
-  try {
-    if (req?.files?.profileImage?.[0]?.path) {
-      const profileImage = await uploadOnCLoudinary(
-        req.files.profileImage[0].path,
-        "users",
-        req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
-          ? []
-          : ImageFormats
-      );
+  if (req?.files?.profileImage?.[0]?.path) {
+    const profileImage = await uploadOnCLoudinary(
+      req.files.profileImage[0].path,
+      "users",
+      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+        ? []
+        : ImageFormats
+    );
 
-      user.profileImage = profileImage?.url ?? "";
-    }
-
-    if (req?.files?.coverImage?.[0]?.path) {
-      const coverImage = await uploadOnCLoudinary(
-        req.files.coverImage[0].path,
-        "users",
-        req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
-          ? []
-          : ImageFormats
-      );
-
-      user.coverImage = coverImage?.url ?? "";
-    }
-
-    const createdUser = await user.save();
-    const accessToken = await createJWT(createdUser._id, createdUser.email);
-    const csrfToken = await createCsrfToken();
-
-    const data = {
-      ...formatUser(createdUser),
-    };
-
-    res.cookie(SecurityConst.sessionId, accessToken);
-    res.cookie(SecurityConst.csrfTokenServer, csrfToken);
-
-    res
-      .status(200)
-      .json(new ApiResponse(200, data, "Successfully registered."));
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.statusCode).json(error);
-    } else {
-      res.status(500).json(new ApiError(500, "Something went wrong"));
-    }
+    user.profileImage = profileImage?.url ?? "";
   }
+
+  if (req?.files?.coverImage?.[0]?.path) {
+    const coverImage = await uploadOnCLoudinary(
+      req.files.coverImage[0].path,
+      "users",
+      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+        ? []
+        : ImageFormats
+    );
+
+    user.coverImage = coverImage?.url ?? "";
+  }
+
+  const createdUser = await user.save();
+  const accessToken = await createJWT(createdUser._id, createdUser.email);
+  const csrfToken = await createCsrfToken();
+
+  const data = {
+    ...formatUser(createdUser),
+  };
+
+  res.cookie(SecurityConst.sessionId, accessToken);
+  res.cookie(SecurityConst.csrfTokenServer, csrfToken);
+
+  res.status(200).json(new ApiResponse(200, data, "Successfully registered."));
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
