@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createPost,
+  deletePost,
   getPostDetails,
   updatePost,
 } from "../controllers/post.controller.js";
@@ -16,5 +17,7 @@ router
   .put(checkAuth, upload.array("media"), updatePost);
 
 router.route("/:postId").get(getPostDetails);
+
+router.route("/:postId").delete(checkAuth, deletePost);
 
 export default router;

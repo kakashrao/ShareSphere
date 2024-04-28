@@ -138,6 +138,25 @@ export const getPostDetails = asyncHandler(async (req, res) => {
   }
 });
 
+/** TODO - Deleting the post should delete comments and likes as well related to post */
+export const deletePost = asyncHandler(async (req, res) => {
+  if (!req.params?.postId) {
+    res.status(400).json(new ApiError(400, "Invalid Request."));
+    return;
+  }
+
+  const post = await Post.deleteOne({
+    $and: [{ _id: req.params.postId }, { creator: req.user.userId }],
+  });
+
+  if (post["deletedCount"] === 0) {
+    res.status(404).json(new ApiError(404, "Could not find the post."));
+    return;
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Post Deleted Successfully."));
+});
+
 // Common functions below
 
 const formatPost = (post) => {
