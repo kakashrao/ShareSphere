@@ -4,7 +4,7 @@ import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 
-export const likeDislikePost = asyncHandler(async (req, res) => {
+export const togglePostLike = asyncHandler(async (req, res) => {
   if (!req.params?.postId) {
     res.status(400).json(new ApiError(400, "Post Id parameter is missing."));
     return;
@@ -15,25 +15,7 @@ export const likeDislikePost = asyncHandler(async (req, res) => {
     userId: req.user.userId,
   });
 
-  const value = req.query?.value
-    ? req.query.value === "true"
-      ? true
-      : false
-    : false;
-
-  if (value && !!foundLike) {
-    res
-      .status(200)
-      .json(new ApiResponse(200, {}, "You already liked the post."));
-    return;
-  } else if (!value && !foundLike) {
-    res
-      .status(200)
-      .json(new ApiResponse(200, {}, "You haven't liked the post yet."));
-    return;
-  }
-
-  if (value) {
+  if (!foundLike) {
     const like = new Like({
       postId: req.params.postId,
       userId: req.user.userId,
