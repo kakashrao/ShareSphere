@@ -8,8 +8,7 @@ import { createCsrfToken, createJWT } from "../utils/security.utils.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
-    res.status(400).json(new ApiError(400, "Bad Request"));
-    return;
+    throw new ApiError(400, "Bad Request.");
   }
 
   const user = new User(req.body);
@@ -59,20 +58,15 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
-    res.status(400).json(new ApiError(400, "Bad Request"));
-    return;
+    throw new ApiError(400, "Bad Request.");
   }
 
   if (!req.body?.id) {
-    res
-      .status(400)
-      .json(new ApiError(400, "Please provide email or username."));
-    return;
+    throw new ApiError(400, "Please provide email or username.");
   }
 
   if (!req.body?.password) {
-    res.status(400).json(new ApiError(400, "Please provide a valid password."));
-    return;
+    throw new ApiError(400, "Please provide a valid password.");
   }
 
   const user = await User.findOne({
@@ -102,19 +96,16 @@ export const loginUser = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, data, "Successfully Logged In."));
     } else {
-      res.status(401).json(new ApiError(401, "Invalid credentials."));
+      throw new ApiError(401, "username or password is invalid.");
     }
   } else {
-    res
-      .status(404)
-      .json(new ApiError(404, "Account not found, please register yourself."));
+    throw new ApiError(404, "Account not found, please register yourself.");
   }
 });
 
 export const getUserDetails = asyncHandler(async (req, res) => {
   if (!req?.user || !req?.user?.userId) {
-    res.status(403).json(new ApiError(403, "Authorization Failed."));
-    return;
+    throw new ApiError(403, "Authorization Failed.");
   }
 
   try {
@@ -127,16 +118,11 @@ export const getUserDetails = asyncHandler(async (req, res) => {
 
       res.status(200).json(new ApiResponse(200, data, "Successfully fetched."));
     } else {
-      res.status(404).json(new ApiError(404, "User not found."));
+      throw new ApiError(404, "User not found.");
     }
     return;
   } catch (error) {
-    res
-      .status(500)
-      .json(
-        new ApiError(400, error?.message ?? "Failed to fetch user details.")
-      );
-    return;
+    throw new ApiError(500, "Failed to fetch user details.");
   }
 });
 

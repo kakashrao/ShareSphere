@@ -6,13 +6,11 @@ import asyncHandler from "../utils/asyncHandler.utils.js";
 
 export const addComment = asyncHandler(async (req, res) => {
   if (!req.body?.postId) {
-    res.status(400).json(400, "Post Id parameter is missing.");
-    return;
+    throw new ApiError(400, "Post Id parameter is missing.");
   }
 
-  if (!req.body?.message) {
-    res.status(400).json(400, "Message cannot be empty.");
-    return;
+  if (!req.body?.message?.trim()) {
+    throw new ApiError(400, "Message cannot be empty.");
   }
 
   const comment = new Comment({
@@ -41,18 +39,15 @@ export const addComment = asyncHandler(async (req, res) => {
 
 export const updateComment = asyncHandler(async (req, res) => {
   if (!req.params?.commentId) {
-    res.status(400).json(400, "Comment Id parameter is missing.");
-    return;
+    throw new ApiError(400, "Comment Id parameter is missing.");
   }
 
   if (!req.body?.postId) {
-    res.status(400).json(400, "Post Id parameter is missing.");
-    return;
+    throw new ApiError(400, "Post Id parameter is missing.");
   }
 
-  if (!req.body?.message) {
-    res.status(400).json(400, "Message cannot be empty.");
-    return;
+  if (!req.body?.message?.trim()) {
+    throw new ApiError(400, "Message cannot be empty.");
   }
 
   const foundComment = await Comment.findOne({
@@ -64,8 +59,7 @@ export const updateComment = asyncHandler(async (req, res) => {
   });
 
   if (!foundComment) {
-    res.status(404).json(new ApiError(404, "Could not find the comment."));
-    return;
+    throw new ApiError(404, "Could not find the comment.");
   }
 
   foundComment.message = req.body.message;
@@ -85,8 +79,7 @@ export const updateComment = asyncHandler(async (req, res) => {
 
 export const deleteComment = asyncHandler(async (req, res) => {
   if (!req.query?.postId) {
-    res.status(400).json(new ApiError(400, "Invalid Request."));
-    return;
+    throw new ApiError(400, "Bad Request.");
   }
 
   const comment = await Comment.deleteOne({
@@ -98,8 +91,7 @@ export const deleteComment = asyncHandler(async (req, res) => {
   });
 
   if (comment["deletedCount"] === 0) {
-    res.status(404).json(new ApiError(404, "Could not find the comment."));
-    return;
+    throw new ApiError(404, "Could not find the comment.");
   }
 
   const post = await Post.findOne({ _id: req.query.postId });

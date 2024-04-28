@@ -7,8 +7,7 @@ import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
 // Create Post Method
 export const createPost = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
-    res.status(400).json(new ApiError(400, "Invalid Request."));
-    return;
+    throw new ApiError(400, "Invalid Request.");
   }
 
   if (req?.files?.media) {
@@ -44,22 +43,18 @@ export const createPost = asyncHandler(async (req, res) => {
         )
       );
   } else {
-    res
-      .status(500)
-      .json(new ApiError(500, "Failed to create post, please try again."));
+    throw new ApiError(500, "Failed to create post, please try again.");
   }
 });
 
 // Update post method
 export const updatePost = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
-    res.status(400).json(new ApiError(400, "Invalid Request."));
-    return;
+    throw new ApiError(400, "Invalid Request.");
   }
 
   if (!req.params?.postId) {
-    res.status(400).json(new ApiError(400, "Post Id paramter is missing."));
-    return;
+    throw new ApiError(400, "Post Id paramter is missing.");
   }
 
   if (req?.files?.media) {
@@ -86,8 +81,7 @@ export const updatePost = asyncHandler(async (req, res) => {
   });
 
   if (!post) {
-    res.status(404).json(new ApiError(404, "Could not find the post."));
-    return;
+    throw new ApiError(400, "Could not find the post.");
   }
 
   post.title = req.body?.title ?? "";
@@ -106,9 +100,7 @@ export const updatePost = asyncHandler(async (req, res) => {
         )
       );
   } else {
-    res
-      .status(500)
-      .json(new ApiError(500, "Failed to update post, please try again."));
+    throw new ApiError(500, "Failed to update post, please try again.");
   }
 });
 
@@ -118,10 +110,7 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   const size = req.query?.size ?? 10;
 
   if (page < 0) {
-    res
-      .status(400)
-      .json(new ApiError(400, "Page number should be gretaer than zero."));
-    return;
+    throw new ApiError(400, "Page number should be gretaer than zero.");
   }
 
   const totalCount = await Post.estimatedDocumentCount({});
@@ -177,15 +166,14 @@ export const getPostDetails = asyncHandler(async (req, res) => {
         )
       );
   } else {
-    res.status(404).json(new ApiError(404, "Post not found."));
+    throw new ApiError(404, "Post not found.");
   }
 });
 
 /** TODO - Deleting the post should delete comments and likes as well related to post */
 export const deletePost = asyncHandler(async (req, res) => {
   if (!req.params?.postId) {
-    res.status(400).json(new ApiError(400, "Invalid Request."));
-    return;
+    throw new ApiError(400, "Invalid Request.");
   }
 
   const post = await Post.deleteOne({

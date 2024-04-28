@@ -6,8 +6,7 @@ import asyncHandler from "../utils/asyncHandler.utils.js";
 
 export const togglePostLike = asyncHandler(async (req, res) => {
   if (!req.params?.postId) {
-    res.status(400).json(new ApiError(400, "Post Id parameter is missing."));
-    return;
+    throw new ApiError(400, "Post Id parameter is missing.");
   }
 
   const foundLike = await Like.exists({
@@ -33,8 +32,7 @@ export const togglePostLike = asyncHandler(async (req, res) => {
     });
 
     if (like["deletedCount"] === 0) {
-      res.status(404).json(new ApiError(404, "Invalid User or Post."));
-      return;
+      throw new ApiError(404, "Invalid User or Post.");
     }
 
     const post = await Post.findOne({ _id: req.params.postId });
