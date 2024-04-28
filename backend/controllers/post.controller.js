@@ -210,6 +210,7 @@ const formatPost = (post) => {
     media: post.media,
     creator: post.creator,
     likes: post.likes,
+    comments: post.comments,
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
   };

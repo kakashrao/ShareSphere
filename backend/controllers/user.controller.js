@@ -46,8 +46,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     ...formatUser(createdUser),
   };
 
-  res.cookie(SecurityConst.sessionId, accessToken);
-  res.cookie(SecurityConst.csrfTokenServer, csrfToken);
+  const cookieOptions = {
+    secure: true,
+    http: true,
+  };
+
+  res.cookie(SecurityConst.sessionId, accessToken, cookieOptions);
+  res.cookie(SecurityConst.csrfTokenServer, csrfToken, cookieOptions);
 
   res.status(200).json(new ApiResponse(200, data, "Successfully registered."));
 });
@@ -85,8 +90,13 @@ export const loginUser = asyncHandler(async (req, res) => {
         ...formatUser(user),
       };
 
-      res.cookie(SecurityConst.sessionId, accessToken);
-      res.cookie(SecurityConst.csrfTokenServer, csrfToken);
+      const cookieOptions = {
+        secure: true,
+        http: true,
+      };
+
+      res.cookie(SecurityConst.sessionId, accessToken, cookieOptions);
+      res.cookie(SecurityConst.csrfTokenServer, csrfToken, cookieOptions);
 
       res
         .status(200)

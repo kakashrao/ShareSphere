@@ -17,12 +17,15 @@ app.use(express.static("./public"));
 app.use(cookieParser());
 
 // Routes Imports
+import commentRoutes from "./routes/comment.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 app.use("/user", userRoutes);
 app.use("/post", postRoutes);
+app.use("/comment", commentRoutes);
+
 app.use("/assets", uploadRoutes);
 
 export default app;
