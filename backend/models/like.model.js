@@ -2,11 +2,12 @@ import mongoose from "mongoose";
 
 const likeSchema = mongoose.Schema({
   postId: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Post",
   },
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
 });
