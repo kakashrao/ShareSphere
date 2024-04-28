@@ -34,3 +34,24 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     return;
   }
 });
+
+export const decodeTokenIfLogin = async (req, res, next) => {
+  const accessToken = req.cookies[SecurityConst.sessionId];
+
+  if (accessToken) {
+    try {
+      const decodedToken = verifyJWT(accessToken);
+
+      if (decodedToken) {
+        const user = {
+          userId: decodedToken?.userId,
+          email: decodedToken?.email,
+        };
+
+        req.user = { ...user };
+      }
+    } catch (error) {}
+  }
+
+  next();
+};

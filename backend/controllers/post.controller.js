@@ -4,6 +4,8 @@ import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
 
+import mongoose from "mongoose";
+
 // Create Post Method
 export const createPost = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
@@ -128,13 +130,93 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     return;
   }
 
-  const posts = await Post.find()
-    .skip(page * size)
-    .limit(size)
-    .populate("creator", "fullName profileImage");
+  const posts = await Post.aggregate([
+    {
+      $skip: +page * +size,
+    },
+    {
+      $limit: +size,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "creator",
+        foreignField: "_id",
+        as: "creator",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              profileImage: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        creator: {
+          $arrayElemAt: ["$creator", 0],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "postId",
+        as: "likesOnPost",
+      },
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "commentOn",
+        as: "commentsOnPost",
+      },
+    },
+    {
+      $addFields: {
+        likes: {
+          $size: "$likesOnPost",
+        },
+        comments: {
+          $size: "$commentsOnPost",
+        },
+        isLiked: {
+          $cond: {
+            if: {
+              $in: [
+                req.user?.userId
+                  ? new mongoose.Types.ObjectId(req.user?.userId)
+                  : null,
+                "$likesOnPost.userId",
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        media: 1,
+        creator: 1,
+        likes: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        comments: 1,
+        isLiked: 1,
+      },
+    },
+  ]);
 
   const data = {
-    result: posts.map((d) => formatPost(d)),
+    result: posts,
     total: totalCount,
   };
 
@@ -150,21 +232,96 @@ export const getPostDetails = asyncHandler(async (req, res) => {
     return;
   }
 
-  const post = await Post.findById(req.params.postId).populate(
-    "creator",
-    "fullName profileImage"
-  );
+  const aggregatedPosts = await Post.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.params.postId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "creator",
+        foreignField: "_id",
+        as: "creator",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              profileImage: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        creator: {
+          $arrayElemAt: ["$creator", 0],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "postId",
+        as: "likesOnPost",
+      },
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "commentOn",
+        as: "commentsOnPost",
+      },
+    },
+    {
+      $addFields: {
+        likes: {
+          $size: "$likesOnPost",
+        },
+        comments: {
+          $size: "$commentsOnPost",
+        },
+        isLiked: {
+          $cond: {
+            if: {
+              $in: [
+                req.user?.userId
+                  ? new mongoose.Types.ObjectId(req.user?.userId)
+                  : null,
+                "$likesOnPost.userId",
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        media: 1,
+        creator: 1,
+        likes: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        comments: 1,
+        isLiked: 1,
+      },
+    },
+  ]);
+
+  const post = aggregatedPosts?.[0];
 
   if (post) {
     res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          formatPost(post),
-          "Post Details Fetched Successfully."
-        )
-      );
+      .json(new ApiResponse(200, post, "Post Details Fetched Successfully."));
   } else {
     throw new ApiError(404, "Post not found.");
   }
@@ -197,8 +354,9 @@ const formatPost = (post) => {
     description: post.description,
     media: post.media,
     creator: post.creator,
-    likes: post.likes,
-    comments: post.comments,
+    likes: post?.likes ?? 0,
+    comments: post?.comments ?? 0,
+    isLiked: post?.isLiked ?? false,
     createdAt: post.createdAt,
     updatedAt: post.updatedAt,
   };

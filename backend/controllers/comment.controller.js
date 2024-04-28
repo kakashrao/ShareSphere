@@ -1,5 +1,4 @@
 import Comment from "../models/comment.model.js";
-import Post from "../models/post.model.js";
 import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
@@ -20,11 +19,6 @@ export const addComment = asyncHandler(async (req, res) => {
   });
 
   const savedComment = await comment.save();
-
-  const post = await Post.findOne({ _id: req.body.postId });
-  post.comments++;
-
-  await post.save();
 
   res
     .status(201)
@@ -92,13 +86,6 @@ export const deleteComment = asyncHandler(async (req, res) => {
 
   if (comment["deletedCount"] === 0) {
     throw new ApiError(404, "Could not find the comment.");
-  }
-
-  const post = await Post.findOne({ _id: req.query.postId });
-  post.comments--;
-
-  if (post.comments >= 0) {
-    await post.save();
   }
 
   res

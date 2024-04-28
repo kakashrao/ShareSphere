@@ -26,14 +26,6 @@ const postSchema = mongoose.Schema(
       ref: "User",
       required: [true, "Invalid user."],
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    comments: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
