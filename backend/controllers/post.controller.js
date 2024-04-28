@@ -112,6 +112,49 @@ export const updatePost = asyncHandler(async (req, res) => {
   }
 });
 
+/** TODO - Send whether current user liked the post or not */
+export const getAllPosts = asyncHandler(async (req, res) => {
+  const page = req.query?.page ? req.query.page - 1 : 0;
+  const size = req.query?.size ?? 10;
+
+  if (page < 0) {
+    res
+      .status(400)
+      .json(new ApiError(400, "Page number should be gretaer than zero."));
+    return;
+  }
+
+  const totalCount = await Post.estimatedDocumentCount({});
+
+  if (page * size > totalCount) {
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { result: [], total: totalCount },
+          "Posts Fetched Successfully."
+        )
+      );
+    return;
+  }
+
+  const posts = await Post.find()
+    .skip(page * size)
+    .limit(size)
+    .populate("creator", "fullName profileImage");
+
+  const data = {
+    result: posts.map((d) => formatPost(d)),
+    total: totalCount,
+  };
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, data, "Posts Fetched Successfully."));
+});
+
+/** TODO - Send whether current user liked the post or not */
 export const getPostDetails = asyncHandler(async (req, res) => {
   if (!req.params?.postId) {
     res.status(400).json(new ApiError(400, "Invalid Request."));
