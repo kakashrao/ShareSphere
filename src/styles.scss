@@ -1,7 +1,129 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Lato fonts
+@font-face {
+  font-family: "Lato";
+  src: url("./assets/fonts/lato/Lato-Black.ttf") format("ttf");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("./assets/fonts/lato/Lato-Bold.ttf") format("ttf");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("./assets/fonts/lato/Lato-Regular.ttf") format("ttf");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Montserrat fonts
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-Black.ttf") format("ttf");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-ExtraBold.ttf") format("ttf");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-Bold.ttf") format("ttf");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-SemiBold.ttf") format("ttf");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-Medium.ttf") format("ttf");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/montserrat/Montserrat-Regular.ttf") format("ttf");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: Lato, sans-serif;
+  font-weight: 400;
+}
+
+.lato-regular {
+  font-family: Lato, sans-serif;
+  font-weight: 400;
+}
+
+.lato-bold {
+  font-family: Lato, sans-serif;
+  font-weight: 700;
+}
+
+.lato-black {
+  font-family: Lato, sans-serif;
+  font-weight: 900;
+}
+
+.montserrat-black {
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+}
+
+.montserrat-extra-bold {
+  font-family: Montserrat, sans-serif;
+  font-weight: 800;
+}
+
+.montserrat-bold {
+  font-family: Montserrat, sans-serif;
+  font-weight: 700;
+}
+
+.montserrat-semi-bold {
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
+}
+
+.montserrat-medium {
+  font-family: Montserrat, sans-serif;
+  font-weight: 500;
+}
+
+.montserrat-regular {
+  font-family: Montserrat, sans-serif;
+  font-weight: 400;
 }
