@@ -1,0 +1,99 @@
+// .logo-wrapper {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   height: 100vh;
+//   background: #121212; /* Dark background for dark mode */
+//   margin: 0;
+//   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+// }
+
+// .logo {
+//   display: flex;
+//   align-items: center;
+//   animation: logoPulse 2s infinite;
+// }
+
+// .sphere {
+//   width: 60px;
+//   height: 60px;
+//   background: radial-gradient(
+//     circle,
+//     #00bcd4,
+//     #004d40
+//   ); /* Bright and vibrant colors */
+//   border-radius: 50%;
+//   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+//   margin-right: 15px;
+//   animation: sphereBounce 1.5s infinite ease-in-out;
+// }
+
+// .text {
+//   font-size: 28px;
+//   color: #e0e0e0; /* Light color for dark mode */
+//   font-weight: bold;
+//   text-transform: uppercase;
+//   letter-spacing: 2px;
+//   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+// }
+
+// @keyframes sphereBounce {
+//   0%,
+//   20%,
+//   50%,
+//   80%,
+//   100% {
+//     transform: translateY(0);
+//   }
+//   40% {
+//     transform: translateY(-10px);
+//   }
+//   60% {
+//     transform: translateY(-5px);
+//   }
+// }
+
+// @keyframes logoPulse {
+//   0% {
+//     transform: scale(1);
+//   }
+//   50% {
+//     transform: scale(1.1);
+//   }
+//   100% {
+//     transform: scale(1);
+//   }
+// }
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #121212; /* Dark background for dark mode */
+  margin: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  width: 100px;
+  height: 100px;
+  animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
