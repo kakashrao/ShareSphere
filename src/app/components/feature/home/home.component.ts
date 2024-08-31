@@ -1,8 +1,11 @@
 import { NgClass } from "@angular/common";
-import { Component, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
+import { DialogService } from "primeng/dynamicdialog";
 import { AutoFocusDirective } from "../../../directives/autoFocus/auto-focus.directive";
+import { AuthStore } from "../../../store/auth.store";
+import { AuthComponent } from "../auth/auth.component";
 
 interface Feature {
   name: string;
@@ -16,10 +19,14 @@ type FeatureType = "HOME" | "FAVOURITES" | "POST" | "MESSAGES" | "PROFILE";
   selector: "sp-home",
   standalone: true,
   imports: [ButtonModule, NgClass, AutoCompleteModule, AutoFocusDirective],
+  providers: [DialogService],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
 })
 export class HomeComponent {
+  authStore = inject(AuthStore);
+  dialog = inject(DialogService);
+
   features: Feature[] = [
     { name: "Home", value: "HOME", icon: "pi pi-home" },
     { name: "Message", value: "MESSAGES", icon: "pi pi-inbox" },
@@ -32,6 +39,21 @@ export class HomeComponent {
   searchbarOpened = signal<boolean>(false);
 
   moveToFeature(feature: Feature) {
+    if (!this.authStore.isLoggedIn()) {
+      this.dialog.open(AuthComponent, {
+        width: "95vw",
+        height: "400px",
+        style: {
+          maxHeight: "95vh",
+        },
+        showHeader: false,
+        styleClass: "custom-dialog",
+        closeOnEscape: true,
+        closable: true,
+      });
+      return;
+    }
+
     this.selectedFeature.set(feature.value);
   }
 

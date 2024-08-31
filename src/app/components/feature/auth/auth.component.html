@@ -1,1 +1,40 @@
-<p>auth works!</p>
+<section class="p-2.5 flex flex-col items-center">
+  <i
+    class="pi pi-times cursor-pointer absolute right-2 top-2 text-base"
+    (click)="close()"
+  ></i>
+
+  <h1 class="montserrat-bold text-center text-base mt-2">Welcome back!</h1>
+  <p class="text-center text-sm w-4/5 lato-regular">
+    Enter your email and password to access your account.
+  </p>
+
+  <form class="flex flex-col items-center gap-5 mt-5 w-10/12 auth-form">
+    <div class="flex flex-col gap-2 w-full">
+      <label class="montserrat-regular text-sm">Username or Email</label>
+      <input
+        type="text"
+        placeholder="Enter your username or email"
+        pInputText
+      />
+    </div>
+    <div class="flex flex-col gap-2 w-full text-sm">
+      <label class="montserrat-regular">Password</label>
+      <p-password
+        placeholder="Enter your password"
+        [toggleMask]="true"
+        [feedback]="false"
+      />
+    </div>
+
+    <p-button
+      label="Submit"
+      class="w-full h-10 rounded flex items-center justify-center bg-cyan-700 text-white montserrat-bold"
+    />
+  </form>
+
+  <p class="montserrat-bold mt-3 mb-2 text-sm">Forgot Password?</p>
+  <p class="text-sm lato-regular">
+    Don't have an account? <a class="montserrat-bold">Sign up</a>
+  </p>
+</section>

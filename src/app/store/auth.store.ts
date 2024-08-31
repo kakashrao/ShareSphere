@@ -1,4 +1,11 @@
-import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
+import { computed } from "@angular/core";
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
+} from "@ngrx/signals";
 import { User } from "../models/user.model";
 
 const initialState: User = {
@@ -15,6 +22,9 @@ const initialState: User = {
 export const AuthStore = signalStore(
   { providedIn: "root" },
   withState(initialState),
+  withComputed(({ userId }) => ({
+    isLoggedIn: computed<boolean>(() => !!userId()),
+  })),
   withMethods((store) => ({
     register(): void {
       patchState(store, (state) => {
