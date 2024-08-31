@@ -42,7 +42,7 @@ export class HomeComponent {
     if (!this.authStore.isLoggedIn()) {
       this.dialog.open(AuthComponent, {
         width: "95vw",
-        height: "400px",
+        height: "auto",
         style: {
           maxHeight: "95vh",
         },

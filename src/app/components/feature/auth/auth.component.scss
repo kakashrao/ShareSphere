@@ -1,3 +1,13 @@
+.auth-section {
+  &.login {
+    height: 400px;
+  }
+
+  &.signup {
+    height: 80vh;
+  }
+}
+
 .auth-form {
   .p-password {
     width: 100%;
