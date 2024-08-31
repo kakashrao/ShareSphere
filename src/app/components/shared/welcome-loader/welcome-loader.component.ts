@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-welcome-loader',
+  selector: "sp-welcome-loader",
   standalone: true,
   imports: [],
-  templateUrl: './welcome-loader.component.html',
-  styleUrl: './welcome-loader.component.scss'
+  templateUrl: "./welcome-loader.component.html",
+  styleUrl: "./welcome-loader.component.scss",
 })
-export class WelcomeLoaderComponent {
-
-}
+export class WelcomeLoaderComponent {}
