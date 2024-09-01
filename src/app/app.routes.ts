@@ -9,4 +9,14 @@ export const routes: Routes = [
         (c) => c.HomeComponent
       ),
   },
+  {
+    path: "create-post",
+    loadComponent: () =>
+      import("./components/feature/create-post/create-post.component").then(
+        (c) => c.CreatePostComponent
+      ),
+    data: {
+      asFullPage: true,
+    },
+  },
 ];

@@ -9,7 +9,7 @@ import {
 import { User } from "../models/user.model";
 
 const initialState: User = {
-  userId: "",
+  userId: "sdsdsa",
   coverImage: "",
   createdAt: "",
   email: "",

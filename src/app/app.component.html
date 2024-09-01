@@ -1,1 +1,25 @@
-<router-outlet></router-outlet>
+<section>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  @if (!generalStore.showFullPage()) {
+    <footer
+      class="w-11/12 absolute bottom-2 w-full p-2.5 grid grid-cols-5 gap-4 shadow-lg border border-gray-300 rounded-full bg-white"
+      style="width: 95%; left: 2.5%"
+    >
+      @for (item of features; track item.value) {
+        <div class="text-center relative">
+          <p-button
+            class="{{ 'rounded-full feature-button ' + item.icon }}"
+            [ngClass]="
+              selectedFeature() === item.value
+                ? 'border bg-cyan-700 text-white p-3 absolute bottom-0 left-2.5 drop-shadow-lg active'
+                : ''
+            "
+            (click)="moveToFeature(item)"
+          ></p-button>
+        </div>
+      }
+    </footer>
+  }
+</section>
