@@ -18,13 +18,14 @@
     @if (searchbarOpened()) {
       <div class="absolute left-0 top-0 w-full p-3 home-search">
         <p-autoComplete
-          spAutoFocus
+          pAutoFocus
+          [autofocus]="true"
           class="rounded text-sm"
           placeholder="Search posts, people"
           (onBlur)="toggleSearchbar()"
         />
       </div>
-    }
+    } 
   </header>
   <main></main>
   <footer

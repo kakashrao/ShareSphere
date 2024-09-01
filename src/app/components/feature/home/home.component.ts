@@ -1,9 +1,9 @@
 import { NgClass } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { AutoCompleteModule } from "primeng/autocomplete";
+import { AutoFocusModule } from "primeng/autofocus";
 import { ButtonModule } from "primeng/button";
 import { DialogService } from "primeng/dynamicdialog";
-import { AutoFocusDirective } from "../../../directives/autoFocus/auto-focus.directive";
 import { AuthStore } from "../../../store/auth.store";
 import { AuthComponent } from "../auth/auth.component";
 
@@ -18,7 +18,7 @@ type FeatureType = "HOME" | "FAVOURITES" | "POST" | "MESSAGES" | "PROFILE";
 @Component({
   selector: "sp-home",
   standalone: true,
-  imports: [ButtonModule, NgClass, AutoCompleteModule, AutoFocusDirective],
+  imports: [ButtonModule, NgClass, AutoCompleteModule, AutoFocusModule],
   providers: [DialogService],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
