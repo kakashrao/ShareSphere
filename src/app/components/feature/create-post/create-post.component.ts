@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ButtonModule } from "primeng/button";
 import { EditorModule } from "primeng/editor";
 
 @Component({
   selector: "sp-create-post",
   standalone: true,
-  imports: [EditorModule, ReactiveFormsModule],
+  imports: [EditorModule, ButtonModule, ReactiveFormsModule],
   templateUrl: "./create-post.component.html",
   styleUrl: "./create-post.component.scss",
 })

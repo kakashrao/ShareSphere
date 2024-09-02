@@ -25,11 +25,12 @@
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.png", "src/assets"],
             "styles": [
-              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.snow.css",
-              "src/styles.scss"
+              "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": []
           },
@@ -82,7 +83,13 @@
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.png", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/primeng/resources/themes/saga-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.snow.css"
+            ],
             "scripts": []
           }
         }
