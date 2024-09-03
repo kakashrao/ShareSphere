@@ -1,7 +1,42 @@
 <section>
-  <header class="bg-slate-100 flex justify-between p-2">
+  <header class="bg-slate-100 flex justify-between items-center p-2">
     <i class="pi pi-times font-base"></i>
     <p-button label="Publish" [raised]="true" />
   </header>
-  <p-editor [formControl]="editorControl" [style]="{ height: '320px' }" />
+  <p-editor [formControl]="editorControl" styleClass="post-editor">
+    <ng-template pTemplate="header">
+      <span class="ql-formats">
+        <select class="ql-size">
+          <option value="small"></option>
+          <!-- Note a missing, thus falsy value, is used to reset to default -->
+          <option selected></option>
+          <option value="large"></option>
+          <option value="huge"></option>
+        </select>
+        <select class="ql-font ql-picker"></select>
+      </span>
+      <span class="ql-formats">
+        <button type="button" class="ql-bold" aria-label="Bold"></button>
+        <button type="button" class="ql-italic" aria-label="Italic"></button>
+        <button
+          type="button"
+          class="ql-underline"
+          aria-label="Underline"
+        ></button>
+        <button type="button" class="ql-strike" aria-label="strike"></button>
+      </span>
+      <span class="ql-formats">
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+      </span>
+      <span class="ql-formats">
+        <button type="button" class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet" type="button"></button>
+        <select class="ql-align"></select>
+      </span>
+      <span class="ql-formats">
+        <!-- Add link and image code here -->
+      </span>
+    </ng-template></p-editor
+  >
 </section>

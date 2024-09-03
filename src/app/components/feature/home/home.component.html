@@ -9,9 +9,11 @@
   </span>
   @if (!searchbarOpened()) {
     <p-button
-      class="pi pi-search font-bold text-white"
-      (click)="toggleSearchbar()"
-    ></p-button>
+      icon="pi pi-search"
+      [rounded]="true"
+      severity="info"
+      (onClick)="toggleSearchbar()"
+    />
   }
 
   @if (searchbarOpened()) {
