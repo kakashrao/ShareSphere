@@ -1,3 +1,16 @@
 .post-editor {
   height: calc(100vh - 132px);
 }
+
+.custom-image-upload {
+  .p-messages {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 14px;
+
+    svg {
+      width: 20px;
+    }
+  }
+}
