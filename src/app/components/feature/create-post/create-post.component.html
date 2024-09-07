@@ -3,7 +3,7 @@
     <i class="pi pi-times font-base"></i>
     <p-button label="Publish" [raised]="true" />
   </header>
-  <p-editor [formControl]="editorControl" styleClass="post-editor">
+  <p-editor styleClass="post-editor" #postEditor>
     <ng-template pTemplate="header">
       <span class="ql-formats">
         <select class="ql-size">
@@ -34,9 +34,52 @@
         <button class="ql-list" value="bullet" type="button"></button>
         <select class="ql-align"></select>
       </span>
-      <span class="ql-formats">
-        <!-- Add link and image code here -->
-      </span>
-    </ng-template></p-editor
-  >
+      <span class="ql-formats custom-formats">
+        <p-fileUpload
+          mode="basic"
+          name="demo[]"
+          chooseIcon="pi pi-image"
+          url="https://www.primefaces.org/cdn/api/upload.php"
+          accept="image/*"
+          maxFileSize="1000000"
+          [auto]="true"
+          chooseLabel=""
+          class="inline-block relative top-1"
+          styleClass="bg-green-100 text-green-900 p-1"
+          [style]="{
+            border: '0'
+          }"
+        />
+        <span
+          class="pi pi-link bg-purple-100 text-purple-900 px-2.5 py-2 ml-2 rounded"
+          (click)="openLinkOverlay(op, $event)"
+        ></span>
+      </span> </ng-template
+  ></p-editor>
 </section>
+
+<p-overlayPanel #op>
+  <div>
+    <div class="flex flex-col items-end gap-4">
+      <p-inputGroup>
+        <p-inputGroupAddon>
+          <i class="pi pi-link"></i>
+        </p-inputGroupAddon>
+        <input
+          pInputText
+          placeholder="type or paste the link here"
+          class="lato-regular text-base"
+          #linkInput
+        />
+      </p-inputGroup>
+      <button
+        pButton
+        pRipple
+        label="Add"
+        class="lato-bold py-1 px-5"
+        (click)="onAddLink(linkInput, op)"
+        [disabled]="!linkInput.value"
+      ></button>
+    </div>
+  </div>
+</p-overlayPanel>
