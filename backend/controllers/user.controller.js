@@ -11,7 +11,14 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Bad Request.");
   }
 
-  const user = new User(req.body);
+  const registeredUser = {
+    fullName: req.body?.name,
+    username: req.body?.username,
+    email: req.body?.email,
+    password: req?.body?.password,
+  };
+
+  const user = new User(registeredUser);
 
   if (req?.files?.profileImage?.[0]?.path) {
     const profileImage = await uploadOnCLoudinary(

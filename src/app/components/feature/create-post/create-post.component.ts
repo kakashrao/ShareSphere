@@ -6,6 +6,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
@@ -41,6 +42,7 @@ import Quill, { Delta } from "quill/core";
     RippleModule,
     ProgressSpinnerModule,
     ToastModule,
+    RouterLink,
   ],
   providers: [MessageService],
   templateUrl: "./create-post.component.html",
@@ -121,5 +123,20 @@ export class CreatePostComponent {
     };
 
     reader.readAsDataURL(event.files[0]);
+
+    // const editorContent = quill.root.innerHTML;
+
+    // // Extract image URLs from the editor content
+    // const currentImages = Array.from(editorContent.matchAll(/<img.*?src="(.*?)"/g)).map(match => match[1]);
+
+    // // Determine images to delete (those in uploadedImages but not in currentImages)
+    // const imagesToDelete = uploadedImages.filter(url => !currentImages.includes(url));
+
+    // // Send delete request for unused images
+    // fetch('/delete-images', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ images: imagesToDelete })
+    // });
   }
 }

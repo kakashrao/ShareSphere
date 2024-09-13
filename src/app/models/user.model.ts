@@ -8,3 +8,15 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UserRegistrationRequest {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface UserLoginRequest {
+  id: string;
+  password: string;
+}

@@ -157,3 +157,10 @@ body {
     padding: 0;
   }
 }
+
+.mandatory-fill {
+  &:after {
+    content: "*";
+    color: red;
+  }
+}
