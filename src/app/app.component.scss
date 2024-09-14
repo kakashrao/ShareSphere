@@ -1,11 +1,3 @@
-.feature-button {
-  transition: transform 0.1s ease-in;
-
-  &.active {
-    transform: scale(1.2) translateY(-10px);
-  }
-}
-
 .root-message {
   .p-toast-message {
     .p-toast-summary {

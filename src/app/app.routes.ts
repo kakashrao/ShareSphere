@@ -2,12 +2,11 @@ import { Routes } from "@angular/router";
 import { isAuthenticated } from "./utils/auth.utils";
 
 export const routes: Routes = [
-  { path: "", redirectTo: "home", pathMatch: "full" },
   {
-    path: "home",
-    loadComponent: () =>
-      import("./components/feature/home/home.component").then(
-        (c) => c.HomeComponent
+    path: "",
+    loadChildren: () =>
+      import("./components/landing/landing.module").then(
+        (c) => c.LandingModule
       ),
   },
   {
