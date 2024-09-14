@@ -16,12 +16,12 @@ export class AuthService {
 
   register(payload: UserRegistrationRequest): Observable<User> {
     return this.http.post<User>(
-      `${environment.baseUrl}/user/register`,
+      `${environment.baseUrl}/api/user/register`,
       payload
     );
   }
 
   login(payload: UserLoginRequest) {
-    return this.http.put(`${environment.baseUrl}/user/login`, payload);
+    return this.http.put(`${environment.baseUrl}/api/user/login`, payload);
   }
 }

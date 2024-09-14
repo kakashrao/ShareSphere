@@ -23,11 +23,11 @@ import postRoutes from "./routes/post.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
-app.use("/user", userRoutes);
-app.use("/post", postRoutes);
-app.use("/comment", commentRoutes);
-app.use("/like", likeRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
+app.use("/api/like", likeRoutes);
 
-app.use("/assets", uploadRoutes);
+app.use("/api/assets", uploadRoutes);
 
 export default app;
