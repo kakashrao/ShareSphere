@@ -20,30 +20,6 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const user = new User(registeredUser);
 
-  if (req?.files?.profileImage?.[0]?.path) {
-    const profileImage = await uploadOnCLoudinary(
-      req.files.profileImage[0].path,
-      "users",
-      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
-        ? []
-        : ImageFormats
-    );
-
-    user.profileImage = profileImage?.url ?? "";
-  }
-
-  if (req?.files?.coverImage?.[0]?.path) {
-    const coverImage = await uploadOnCLoudinary(
-      req.files.coverImage[0].path,
-      "users",
-      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
-        ? []
-        : ImageFormats
-    );
-
-    user.coverImage = coverImage?.url ?? "";
-  }
-
   const createdUser = await user.save();
   const accessToken = await createJWT(createdUser._id, createdUser.email);
   const csrfToken = await createCsrfToken();
@@ -54,13 +30,13 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const cookieOptions = process.env.COOKIE_OPTIONS;
 
-  res.cookie(SecurityConst.sessionId, accessToken, cookieOptions);
-  res.cookie(SecurityConst.csrfTokenServer, csrfToken, {
-    ...cookieOptions,
-    http: false,
-  });
-
-  res.status(200).json(new ApiResponse(200, data, "Successfully registered."));
+  res.status(200).cookie(SecurityConst.sessionId, accessToken, cookieOptions);
+  res
+    .cookie(SecurityConst.csrfTokenServer, csrfToken, {
+      ...cookieOptions,
+      http: false,
+    })
+    .json(new ApiResponse(200, data, "Successfully registered."));
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
@@ -93,14 +69,13 @@ export const loginUser = asyncHandler(async (req, res) => {
 
       const cookieOptions = process.env.COOKIE_OPTIONS;
 
-      res.cookie(SecurityConst.sessionId, accessToken, cookieOptions);
-      res.cookie(SecurityConst.csrfTokenServer, csrfToken, {
-        ...cookieOptions,
-        http: false,
-      });
-
       res
         .status(200)
+        .cookie(SecurityConst.sessionId, accessToken, cookieOptions)
+        .cookie(SecurityConst.csrfTokenServer, csrfToken, {
+          ...cookieOptions,
+          http: false,
+        })
         .json(new ApiResponse(200, data, "Successfully Logged In."));
     } else {
       throw new ApiError(401, "username or password is invalid.");
@@ -112,7 +87,8 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 export const getUserDetails = asyncHandler(async (req, res) => {
   if (!req?.user || !req?.user?.userId) {
-    throw new ApiError(403, "Authorization Failed.");
+    res.status(204).json();
+    return;
   }
 
   try {
@@ -132,6 +108,40 @@ export const getUserDetails = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Failed to fetch user details.");
   }
 });
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  res
+    .status(200)
+    .clearCookie(SecurityConst.sessionId)
+    .clearCookie(SecurityConst.csrfTokenServer)
+    .json(new ApiResponse(200, data, "Successfully Logged Out."));
+});
+
+export const updateUser = async (req) => {
+  if (req?.files?.profileImage?.[0]?.path) {
+    const profileImage = await uploadOnCLoudinary(
+      req.files.profileImage[0].path,
+      "users",
+      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+        ? []
+        : ImageFormats
+    );
+
+    user.profileImage = profileImage?.url ?? "";
+  }
+
+  if (req?.files?.coverImage?.[0]?.path) {
+    const coverImage = await uploadOnCLoudinary(
+      req.files.coverImage[0].path,
+      "users",
+      req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
+        ? []
+        : ImageFormats
+    );
+
+    user.coverImage = coverImage?.url ?? "";
+  }
+};
 
 /* Common methods below */
 

@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { isAuthenticated } from "./utils/auth.utils";
 
 export const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -18,5 +19,6 @@ export const routes: Routes = [
     data: {
       asFullPage: true,
     },
+    canActivate: [isAuthenticated],
   },
 ];

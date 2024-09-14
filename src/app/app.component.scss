@@ -5,3 +5,20 @@
     transform: scale(1.2) translateY(-10px);
   }
 }
+
+.root-message {
+  .p-toast-message {
+    .p-toast-summary {
+      font-size: 16px;
+    }
+
+    .p-toast-detail {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    svg {
+      font-size: 20px;
+    }
+  }
+}

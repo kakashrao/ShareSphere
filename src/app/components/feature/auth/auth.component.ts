@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { MessageService } from "primeng/api";
 import { AutoFocusModule } from "primeng/autofocus";
 import { ButtonModule } from "primeng/button";
 import { DynamicDialogRef } from "primeng/dynamicdialog";
@@ -13,7 +14,11 @@ import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { PasswordModule } from "primeng/password";
 import { finalize } from "rxjs";
-import { User, UserRegistrationRequest } from "../../../models/user.model";
+import {
+  User,
+  UserLoginRequest,
+  UserRegistrationRequest,
+} from "../../../models/user.model";
 import { AuthStore } from "../../../store/auth.store";
 
 type AuthMode = "LOGIN" | "SIGNUP";
@@ -39,6 +44,7 @@ export class AuthComponent {
   private fb = inject(FormBuilder);
   private _ref = inject(DynamicDialogRef<AuthComponent>);
   private authStore = inject(AuthStore);
+  private messageService = inject(MessageService);
   blockSpace: RegExp = /[^s]/;
 
   isLoading = signal<boolean>(false);
@@ -105,7 +111,38 @@ export class AuthComponent {
       .register(payload)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (response: User) => {},
+        next: (response: User) => {
+          this.messageService.add({
+            key: "root",
+            severity: "success",
+            summary: `Hey ${payload.name}!`,
+            detail: `Ready to make your feed fabulous? Let’s get started!`,
+            life: 3000,
+          });
+          this.close();
+        },
+      });
+  }
+
+  handleUserLogin() {
+    this.isLoading.set(true);
+
+    const payload = this.loginForm.value as UserLoginRequest;
+
+    this.authStore
+      .login(payload)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (response: User) => {
+          this.messageService.add({
+            key: "root",
+            severity: "success",
+            summary: `Welcome back, ${response.fullName}!`,
+            detail: `Ready to conquer the feed again? 🎉`,
+            life: 3000,
+          });
+          this.close();
+        },
       });
   }
 

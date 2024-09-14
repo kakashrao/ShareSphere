@@ -1,9 +1,18 @@
 import { NgClass } from "@angular/common";
-import { Component, inject, OnDestroy, OnInit, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from "@angular/core";
 import { ActivationEnd, Router, RouterOutlet } from "@angular/router";
 
 import { DialogService } from "primeng/dynamicdialog";
-import { Subscription } from "rxjs";
+import { MessagesModule } from "primeng/messages";
+import { ToastModule } from "primeng/toast";
+import { finalize, Subscription } from "rxjs";
 import { AuthComponent } from "./components/feature/auth/auth.component";
 import { WelcomeLoaderComponent } from "./components/shared/welcome-loader/welcome-loader.component";
 import { AuthStore } from "./store/auth.store";
@@ -21,10 +30,17 @@ type FeatureType = "HOME" | "FAVOURITES" | "POST" | "MESSAGES" | "PROFILE";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, WelcomeLoaderComponent, NgClass],
+  imports: [
+    RouterOutlet,
+    WelcomeLoaderComponent,
+    NgClass,
+    MessagesModule,
+    ToastModule,
+  ],
   providers: [DialogService],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit, OnDestroy {
   private authStore = inject(AuthStore);
@@ -46,7 +62,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ];
 
   selectedFeature = signal<FeatureType>("HOME");
+  isFetching = signal<boolean>(true);
   private routerEventsSub$: Subscription | undefined;
+
+  constructor() {
+    this._fetchUserDetails();
+  }
 
   ngOnInit(): void {
     this.routerEventsSub$ = this.router.events.subscribe((event) => {
@@ -60,6 +81,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routerEventsSub$?.unsubscribe();
+  }
+
+  private _fetchUserDetails() {
+    this.authStore
+      .getUserDetails()
+      .pipe(finalize(() => this.isFetching.set(false)))
+      .subscribe();
   }
 
   moveToFeature(feature: Feature) {

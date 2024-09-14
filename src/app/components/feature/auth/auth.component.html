@@ -46,7 +46,7 @@
         [label]="isLoading() ? 'Submitting...' : 'Submit'"
         class="w-full h-10 rounded flex items-center justify-center bg-cyan-700 text-white montserrat-bold"
         [disabled]="!loginForm.valid"
-        (onClick)="isLoading() ? null : handleUserRegistration()"
+        (onClick)="isLoading() ? null : handleUserLogin()"
       />
     </form>
 
