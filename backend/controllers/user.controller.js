@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
-import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
 import { createCsrfToken, createJWT } from "../utils/security.utils.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -119,7 +119,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 export const updateUser = async (req) => {
   if (req?.files?.profileImage?.[0]?.path) {
-    const profileImage = await uploadOnCLoudinary(
+    const profileImage = await uploadOnCloudinary(
       req.files.profileImage[0].path,
       "users",
       req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"
@@ -131,7 +131,7 @@ export const updateUser = async (req) => {
   }
 
   if (req?.files?.coverImage?.[0]?.path) {
-    const coverImage = await uploadOnCLoudinary(
+    const coverImage = await uploadOnCloudinary(
       req.files.coverImage[0].path,
       "users",
       req?.files?.profileImage?.[0]?.mimetype === "image/jpeg"

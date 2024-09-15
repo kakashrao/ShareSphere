@@ -3,18 +3,18 @@ import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import {
   deleteFromCloudinary,
-  uploadOnCLoudinary,
+  uploadOnCloudinary,
 } from "../utils/cloudinary.utils.js";
 
 export const uploadMedia = asyncHandler(async (req, res) => {
-  const files = req.files?.files;
+  const files = req.files;
   const folder = req.params.folder;
   const result = [];
 
   if (files && files.length > 0) {
     for (const file of files) {
       try {
-        const response = await uploadOnCLoudinary(file.path, folder);
+        const response = await uploadOnCloudinary(file.path, folder);
         response?.url
           ? result.push({
               url: response?.url,

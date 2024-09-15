@@ -2,7 +2,7 @@ import Post from "../models/post.model.js";
 import ApiError from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
-import { uploadOnCLoudinary } from "../utils/cloudinary.utils.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
 
 import mongoose from "mongoose";
 
@@ -17,7 +17,7 @@ export const createPost = asyncHandler(async (req, res) => {
 
     for (const file of req.files.media) {
       try {
-        const response = await uploadOnCLoudinary(file.path, "posts");
+        const response = await uploadOnCloudinary(file.path, "posts");
         response?.url
           ? result.push({
               url: response?.url,
@@ -64,7 +64,7 @@ export const updatePost = asyncHandler(async (req, res) => {
 
     for (const file of req.files.media) {
       try {
-        const response = await uploadOnCLoudinary(file.path, "posts");
+        const response = await uploadOnCloudinary(file.path, "posts");
         response?.url
           ? result.push({
               url: response?.url,

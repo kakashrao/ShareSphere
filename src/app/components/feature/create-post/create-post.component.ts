@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import {
   Component,
   inject,
@@ -12,7 +12,6 @@ import { ButtonModule } from "primeng/button";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { Editor, EditorModule } from "primeng/editor";
 import {
-  FileProgressEvent,
   FileUploadErrorEvent,
   FileUploadEvent,
   FileUploadModule,
@@ -26,6 +25,9 @@ import { RippleModule } from "primeng/ripple";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
+import { environment } from "../../../../environments/environment";
+import { Asset } from "../../../models/asset.model";
+import { UploadService } from "../../../services/upload/upload.service";
 
 @Component({
   selector: "sp-create-post",
@@ -44,7 +46,7 @@ import Quill, { Delta } from "quill/core";
     ToastModule,
     RouterLink,
   ],
-  providers: [MessageService],
+  providers: [UploadService],
   templateUrl: "./create-post.component.html",
   styleUrl: "./create-post.component.scss",
   encapsulation: ViewEncapsulation.None,
@@ -53,7 +55,10 @@ export class CreatePostComponent {
   private messageService = inject(MessageService);
   @ViewChild("postEditor") editor!: Editor;
 
+  imageApiUrl = `${environment.baseUrl}/api/assets/upload/posts`;
+
   isLoading = signal<boolean>(false);
+  uploadedImages = signal<Asset[]>([]);
 
   openLinkOverlay(panel: OverlayPanel, event: MouseEvent) {
     const range = this.editor.quill.history.currentRange as Range;
@@ -87,51 +92,40 @@ export class CreatePostComponent {
       detail: message,
       life: 3000,
     });
-  }
 
-  handleImageInProgress(event: FileProgressEvent) {
-    if (event.progress === 0) {
-      this.isLoading.set(true);
-    } else if (event.progress === 100) {
-      this.isLoading.set(false);
-    }
+    this.isLoading.set(false);
   }
 
   handleImageUpload(event: FileUploadEvent) {
-    console.log(event);
+    let files: Asset[] = [];
+
+    if (event.originalEvent instanceof HttpResponse) {
+      files = event.originalEvent.body.data;
+    }
+
+    if (files.length) {
+      const range = this.editor.quill.history.currentRange as Range;
+
+      this.editor.quill.updateContents(
+        new Delta()
+          .retain(range?.index ?? 0)
+          .delete(range?.length ?? 0)
+          .insert({ image: files[0].url }),
+        Quill.sources.USER
+      );
+
+      this.uploadedImages.update((values) => [...values, ...files]);
+    }
+
+    this.isLoading.set(false);
   }
 
   onUploadImages(event: { files: File[] }) {
-    this.isLoading.set(true);
-
-    const reader = new FileReader();
-
-    reader.onload = (response: ProgressEvent) => {
-      setTimeout(() => {
-        const range = this.editor.quill.history.currentRange as Range;
-
-        this.editor.quill.updateContents(
-          new Delta()
-            .retain(range?.index ?? 0)
-            .delete(range?.length ?? 0)
-            .insert({ image: (response.target as FileReader).result }),
-          Quill.sources.USER
-        );
-
-        this.isLoading.set(false);
-      }, 2000);
-    };
-
-    reader.readAsDataURL(event.files[0]);
-
     // const editorContent = quill.root.innerHTML;
-
     // // Extract image URLs from the editor content
     // const currentImages = Array.from(editorContent.matchAll(/<img.*?src="(.*?)"/g)).map(match => match[1]);
-
     // // Determine images to delete (those in uploadedImages but not in currentImages)
     // const imagesToDelete = uploadedImages.filter(url => !currentImages.includes(url));
-
     // // Send delete request for unused images
     // fetch('/delete-images', {
     //     method: 'POST',

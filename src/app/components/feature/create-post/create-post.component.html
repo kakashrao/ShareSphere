@@ -37,21 +37,21 @@
       <span class="ql-formats custom-formats">
         <p-fileUpload
           mode="basic"
-          name="post"
+          name="files"
           chooseIcon="pi pi-image"
-          url="http://localhost:8080/assets/upload/post"
+          [url]="imageApiUrl"
           accept="image/*"
-          maxFileSize="1000000"
+          maxFileSize="2097152"
           [auto]="true"
-          [multiple]="true"
+          [multiple]="false"
           chooseLabel=""
           class="inline-block relative top-1 custom-image-upload"
           styleClass="bg-green-100 text-green-900 p-1"
           [style]="{
             border: '0'
           }"
+          (onBeforeUpload)="isLoading.set(true)"
           (onError)="handleImageError($event)"
-          (onProgress)="handleImageInProgress($event)"
           (onUpload)="handleImageUpload($event)"
         />
         <span

@@ -9,7 +9,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-const uploadOnCLoudinary = async (
+const uploadOnCloudinary = async (
   localFilePath,
   folder,
   allowedFormats = []
@@ -59,4 +59,4 @@ const deleteFromCloudinary = async (folder, filename) => {
   }
 };
 
-export { deleteFromCloudinary, uploadOnCLoudinary };
+export { deleteFromCloudinary, uploadOnCloudinary };
