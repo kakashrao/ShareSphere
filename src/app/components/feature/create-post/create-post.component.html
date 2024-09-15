@@ -1,9 +1,19 @@
 <section>
   <header class="bg-slate-100 flex justify-between items-center p-2">
-    <i class="pi pi-times font-base" routerLink="/"></i>
-    <p-button label="Publish" [raised]="true" />
+    <div class="flex gap-2 items-center montserrat-bold">
+      <i class="pi pi-times" routerLink="/"></i>
+      <span class="text-base">Create Post</span>
+    </div>
+    <p-speedDial
+      [model]="actionItems"
+      direction="down"
+      class="post-action-dial"
+      buttonClassName="p-button-info w-8 h-8"
+      maskClassName=""
+      class="post-action-dial"
+    />
   </header>
-  <p-editor styleClass="post-editor" #postEditor>
+  <p-editor styleClass="post-editor" [formControl]="editorControl" #postEditor>
     <ng-template pTemplate="header">
       <span class="ql-formats">
         <select class="ql-size">

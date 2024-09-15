@@ -14,3 +14,23 @@
     }
   }
 }
+
+.post-action-dial {
+  .p-speeddial-direction-down {
+    right: 6px;
+    top: 4px;
+
+    svg {
+      width: 15px;
+    }
+
+    .p-speeddial-action {
+      width: 35px;
+      height: 35px;
+
+      svg {
+        width: 15px;
+      }
+    }
+  }
+}

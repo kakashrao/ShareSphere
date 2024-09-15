@@ -6,9 +6,9 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { MessageService } from "primeng/api";
-import { ButtonModule } from "primeng/button";
+import { MenuItem, MessageService } from "primeng/api";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { Editor, EditorModule } from "primeng/editor";
 import {
@@ -22,6 +22,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { OverlayPanel, OverlayPanelModule } from "primeng/overlaypanel";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { RippleModule } from "primeng/ripple";
+import { SpeedDialModule } from "primeng/speeddial";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
@@ -34,7 +35,6 @@ import { UploadService } from "../../../services/upload/upload.service";
   standalone: true,
   imports: [
     EditorModule,
-    ButtonModule,
     FileUploadModule,
     ConfirmPopupModule,
     OverlayPanelModule,
@@ -45,6 +45,8 @@ import { UploadService } from "../../../services/upload/upload.service";
     ProgressSpinnerModule,
     ToastModule,
     RouterLink,
+    ReactiveFormsModule,
+    SpeedDialModule,
   ],
   providers: [UploadService],
   templateUrl: "./create-post.component.html",
@@ -54,11 +56,21 @@ import { UploadService } from "../../../services/upload/upload.service";
 export class CreatePostComponent {
   private messageService = inject(MessageService);
   @ViewChild("postEditor") editor!: Editor;
+  editorControl = new FormControl<string>("");
 
   imageApiUrl = `${environment.baseUrl}/api/assets/upload/posts`;
 
   isLoading = signal<boolean>(false);
   uploadedImages = signal<Asset[]>([]);
+
+  actionItems: MenuItem[] = [
+    { label: "Save", icon: "pi pi-save" },
+    {
+      label: "Publish",
+      icon: "pi pi-upload",
+      command: this.onPublish.bind(this),
+    },
+  ];
 
   openLinkOverlay(panel: OverlayPanel, event: MouseEvent) {
     const range = this.editor.quill.history.currentRange as Range;
@@ -70,9 +82,12 @@ export class CreatePostComponent {
   onAddLink(linkInput: HTMLInputElement, panel: OverlayPanel) {
     const range = this.editor.quill.history.currentRange as Range;
 
-    this.editor.quill.formatText(range.index, range.length, {
-      link: linkInput.value,
-    });
+    this.editor.quill.updateContents(
+      new Delta()
+        .retain(range?.index ?? 0)
+        .retain(range?.length ?? 0, { link: linkInput.value }),
+      Quill.sources.USER
+    );
 
     linkInput.value = "";
     panel.hide();
@@ -132,5 +147,9 @@ export class CreatePostComponent {
     //     headers: { 'Content-Type': 'application/json' },
     //     body: JSON.stringify({ images: imagesToDelete })
     // });
+  }
+
+  onPublish() {
+    console.log(this.editorControl.value);
   }
 }
