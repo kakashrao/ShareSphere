@@ -19,6 +19,7 @@ type FeatureType = "HOME" | "FAVOURITES" | "POST" | "MESSAGES" | "PROFILE";
   templateUrl: "./landing.component.html",
   styleUrl: "./landing.component.scss",
   encapsulation: ViewEncapsulation.None,
+  providers: [DialogService],
 })
 export class LandingComponent {
   private authStore = inject(AuthStore);

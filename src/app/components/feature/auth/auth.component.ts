@@ -9,7 +9,7 @@ import {
 import { MessageService } from "primeng/api";
 import { AutoFocusModule } from "primeng/autofocus";
 import { ButtonModule } from "primeng/button";
-import { DynamicDialogRef } from "primeng/dynamicdialog";
+import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { PasswordModule } from "primeng/password";
@@ -36,6 +36,7 @@ type AuthMode = "LOGIN" | "SIGNUP";
     ReactiveFormsModule,
     JsonPipe,
   ],
+  providers: [DialogService],
   templateUrl: "./auth.component.html",
   styleUrl: "./auth.component.scss",
   encapsulation: ViewEncapsulation.None,
