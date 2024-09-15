@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import handleError from "../utils/errorHandler.js";
 
-const mediaSchema = mongoose.Schema(
+const thumbnailSchema = mongoose.Schema(
   {
     url: String,
     fileName: String,
@@ -16,11 +16,16 @@ const postSchema = mongoose.Schema(
       type: String,
       required: [true, "Title is required."],
     },
-    description: {
+    summary: {
       type: String,
       default: "",
     },
-    media: [mediaSchema],
+    content: {
+      type: String,
+      default: "",
+      required: [true, "Cannot publish empty post."],
+    },
+    thumbnail: thumbnailSchema,
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

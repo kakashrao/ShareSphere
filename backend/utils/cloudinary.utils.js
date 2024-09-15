@@ -59,4 +59,27 @@ const deleteFromCloudinary = async (folder, filename) => {
   }
 };
 
-export { deleteFromCloudinary, uploadOnCloudinary };
+const uploadMultipleFilesToCloudinary = async (files) => {
+  const results = [];
+
+  for (const file of files) {
+    try {
+      const response = await uploadOnCloudinary(file.path, "posts");
+      response?.url
+        ? results.push({
+            url: response?.url,
+            format: response?.format,
+            fileName: response?.original_filename,
+          })
+        : null;
+    } catch (error) {}
+  }
+
+  return results;
+};
+
+export {
+  deleteFromCloudinary,
+  uploadMultipleFilesToCloudinary,
+  uploadOnCloudinary,
+};

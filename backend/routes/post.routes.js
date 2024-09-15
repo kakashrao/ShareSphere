@@ -14,7 +14,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
-router.route("/create").post(checkAuth, upload.array("media"), createPost);
+router.route("/create").post(checkAuth, upload.single("thumbnail"), createPost);
 
 router
   .route("/update/:postId")

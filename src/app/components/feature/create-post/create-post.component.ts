@@ -1,7 +1,9 @@
+import { NgClass } from "@angular/common";
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import {
   Component,
   inject,
+  model,
   signal,
   ViewChild,
   ViewEncapsulation,
@@ -10,19 +12,23 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { MenuItem, MessageService } from "primeng/api";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
+import { DialogModule } from "primeng/dialog";
 import { Editor, EditorModule } from "primeng/editor";
 import {
   FileUploadErrorEvent,
   FileUploadEvent,
+  FileUploadHandlerEvent,
   FileUploadModule,
 } from "primeng/fileupload";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
+import { InputTextareaModule } from "primeng/inputtextarea";
 import { OverlayPanel, OverlayPanelModule } from "primeng/overlaypanel";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { RippleModule } from "primeng/ripple";
 import { SpeedDialModule } from "primeng/speeddial";
+import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
@@ -41,12 +47,16 @@ import { UploadService } from "../../../services/upload/upload.service";
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
+    InputTextareaModule,
     RippleModule,
     ProgressSpinnerModule,
     ToastModule,
     RouterLink,
     ReactiveFormsModule,
     SpeedDialModule,
+    DialogModule,
+    StepperModule,
+    NgClass,
   ],
   providers: [UploadService],
   templateUrl: "./create-post.component.html",
@@ -62,6 +72,8 @@ export class CreatePostComponent {
 
   isLoading = signal<boolean>(false);
   uploadedImages = signal<Asset[]>([]);
+  showPublishDialog = signal(false);
+  activeStep = model<number>(0);
 
   actionItems: MenuItem[] = [
     { label: "Save", icon: "pi pi-save" },
@@ -149,7 +161,27 @@ export class CreatePostComponent {
     // });
   }
 
+  setActiveIndex(index: number) {
+    if (index > 0) {
+    }
+
+    this.activeStep.set(index);
+  }
+
+  uploadThumbnail(event: FileUploadHandlerEvent) {
+    if (event.files) {
+      const reader = new FileReader();
+
+      reader.onload = (event: ProgressEvent) => {
+        console.log((event.target as FileReader).result);
+      };
+
+      reader.readAsDataURL(event.files[0]);
+    }
+  }
+
   onPublish() {
     console.log(this.editorControl.value);
+    this.showPublishDialog.set(true);
   }
 }

@@ -9,7 +9,6 @@
       direction="down"
       class="post-action-dial"
       buttonClassName="p-button-info w-8 h-8"
-      maskClassName=""
       class="post-action-dial"
     />
   </header>
@@ -107,3 +106,146 @@
     </div>
   </div>
 </p-overlayPanel>
+
+<p-dialog
+  header="Edit Profile"
+  [modal]="true"
+  (visibleChange)="showPublishDialog.set($event)"
+  [visible]="showPublishDialog()"
+  [style]="{
+    width: '25rem',
+    maxWidth: '95vw',
+    height: 'fit-content',
+    maxHeight: '90vh'
+  }"
+  [showHeader]="false"
+  contentStyleClass="px-2 py-4"
+>
+  <div>
+    <p-stepper [(activeStep)]="activeStep">
+      <p-stepperPanel>
+        <ng-template pTemplate="header" let-index="index">
+          <button
+            class="bg-transparent border-0 flex flex-col gap-2"
+            (click)="setActiveIndex(index)"
+          >
+            <span
+              class="rounded border-2 w-8 h-8 flex items-center justify-center"
+              [ngClass]="{
+                'bg-cyan-700 border-cyan-700 text-white': index <= activeStep(),
+                'surface-border': index > activeStep()
+              }"
+            >
+              <i class="pi pi-pencil"></i>
+            </span>
+          </button>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="flex gap-1">
+            <span>🖋️ </span>
+            <div>
+              <h5 class="text-sm montserrat-bold">Craft Your Title</h5>
+              <p class="text-xs lato=regular">
+                Your title is the first impression your post will make. Give it
+                a thoughtful touch!
+              </p>
+              <input
+                pInputText
+                id="username"
+                class="mt-4 w-full text-sm lato-regular"
+                placeholder="Enter your title here..."
+                [autofocus]="true"
+              />
+
+              <div class="flex flex-col gap-1 mt-6">
+                <label for="summary" class="text-sm montserrat-regular"
+                  >Add a brief summary about the post</label
+                >
+                <textarea
+                  id="summary"
+                  class="text-sm lato-regular"
+                  [style]="{ width: '100%', height: '80px' }"
+                  pInputTextarea
+                  [autoResize]="false"
+                  placeholder="Enter your summary here..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-2 mt-5">
+            <p-button
+              label="Close"
+              [text]="true"
+              severity="info"
+              styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+            />
+            <p-button
+              label="Next"
+              [raised]="true"
+              severity="info"
+              styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+            />
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+      <p-stepperPanel>
+        <ng-template pTemplate="header" let-index="index">
+          <button
+            class="bg-transparent border-0 flex flex-col gap-2"
+            (click)="setActiveIndex(index)"
+          >
+            <span
+              class="rounded border-2 w-8 h-8 flex items-center justify-center"
+              [ngClass]="{
+                'bg-cyan-700 border-cyan-700 text-white': index <= activeStep(),
+                'surface-border': index > activeStep()
+              }"
+            >
+              <i class="pi pi-image"></i>
+            </span>
+          </button>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div>
+            <div class="flex flex-col items-center gap-2">
+              <span class="pi pi-image text-7xl"></span>
+              <h5 class="text-sm montserrat-bold">
+                Upload an eye-catching image
+              </h5>
+              <p class="text-xs lato=regular text-center">
+                ✨ Your thumbnail is the first thing people will see—make it
+                memorable!
+              </p>
+              <p-fileUpload
+                mode="basic"
+                chooseLabel="Choose"
+                chooseIcon="pi pi-upload"
+                accept="image/*"
+                maxFileSize="1000000"
+                class="text-sm p-2"
+                [auto]="true"
+                [multiple]="false"
+                [customUpload]="true"
+                (uploadHandler)="uploadThumbnail($event)"
+              />
+            </div>
+            <div class="flex items-center justify-end gap-2 mt-6">
+              <p-button
+                label="Back"
+                [text]="true"
+                severity="info"
+                styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              />
+              <p-button
+                label="Publish"
+                [raised]="true"
+                severity="info"
+                styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              />
+            </div>
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+    </p-stepper>
+  </div>
+</p-dialog>

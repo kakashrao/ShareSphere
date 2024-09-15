@@ -3,7 +3,7 @@ import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import {
   deleteFromCloudinary,
-  uploadOnCloudinary,
+  uploadMultipleFilesToCloudinary,
 } from "../utils/cloudinary.utils.js";
 
 export const uploadMedia = asyncHandler(async (req, res) => {
@@ -12,18 +12,7 @@ export const uploadMedia = asyncHandler(async (req, res) => {
   const result = [];
 
   if (files && files.length > 0) {
-    for (const file of files) {
-      try {
-        const response = await uploadOnCloudinary(file.path, folder);
-        response?.url
-          ? result.push({
-              url: response?.url,
-              format: response?.format,
-              fileName: response?.original_filename,
-            })
-          : null;
-      } catch (error) {}
-    }
+    await uploadMultipleFilesToCloudinary(files);
 
     res
       .status(201)

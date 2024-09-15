@@ -12,23 +12,16 @@ export const createPost = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Request.");
   }
 
-  if (req?.files?.media) {
-    const result = [];
+  if (req?.files?.thumbnail) {
+    try {
+      const response = await uploadOnCloudinary(file.path, "thumbnails");
 
-    for (const file of req.files.media) {
-      try {
-        const response = await uploadOnCloudinary(file.path, "posts");
-        response?.url
-          ? result.push({
-              url: response?.url,
-              format: response?.format,
-              fileName: response?.original_filename,
-            })
-          : null;
-      } catch (error) {}
-    }
-
-    req.body.media = [...result];
+      req.body.thumbnail = {
+        url: response?.url,
+        format: response?.format,
+        fileName: response?.original_filename,
+      };
+    } catch (error) {}
   }
 
   const post = new Post({ ...req.body, creator: req.user.userId });
