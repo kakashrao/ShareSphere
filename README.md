@@ -1,5 +1,11 @@
 # ShareSphere
 
+🚧 Work in Progress 🚧
+
+Thank you for visiting! This project is still under development. While the foundational work is complete, there’s more to come. Your feedback and contributions are welcome as I continue to build and improve. Stay tuned for updates!
+
+#
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.2.
 
 ## Development server
