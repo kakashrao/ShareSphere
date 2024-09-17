@@ -1,3 +1,5 @@
+import { Asset } from "./asset.model";
+
 export interface Post {
   postId: string;
   title: string;
@@ -10,4 +12,11 @@ export interface Post {
   isLiked: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PostCreateRequest {
+  title: string;
+  summary: string;
+  content: string;
+  thumbnail?: Asset;
 }

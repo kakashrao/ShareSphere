@@ -180,12 +180,14 @@
               [text]="true"
               severity="info"
               styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              (onClick)="showPublishDialog.set(false)"
             />
             <p-button
               label="Next"
               [raised]="true"
               severity="info"
               styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              (onClick)="setActiveIndex(1)"
             />
           </div>
         </ng-template>
@@ -280,12 +282,14 @@
                 [text]="true"
                 severity="info"
                 styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+                (onClick)="setActiveIndex(0)"
               />
               <p-button
                 label="Publish"
                 [raised]="true"
                 severity="info"
                 styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+                (onClick)="onPublishPost(true)"
               />
             </div>
           </div>

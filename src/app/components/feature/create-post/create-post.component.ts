@@ -34,8 +34,11 @@ import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
+import { catchError, switchMap, tap, throwError } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Asset } from "../../../models/asset.model";
+import { Post, PostCreateRequest } from "../../../models/post.model";
+import { PostService } from "../../../services/post/post.service";
 import { UploadService } from "../../../services/upload/upload.service";
 
 @Component({
@@ -69,6 +72,8 @@ import { UploadService } from "../../../services/upload/upload.service";
 })
 export class CreatePostComponent {
   private messageService = inject(MessageService);
+  private uploadService = inject(UploadService);
+  private postService = inject(PostService);
   @ViewChild("postEditor") editor!: Editor;
   content = model<string>("");
   title = model<string>("");
@@ -88,7 +93,7 @@ export class CreatePostComponent {
     {
       label: "Publish",
       icon: "pi pi-upload",
-      command: this.onPublish.bind(this),
+      command: this.onPublishIconClick.bind(this),
     },
   ];
 
@@ -170,7 +175,15 @@ export class CreatePostComponent {
   }
 
   setActiveIndex(index: number) {
-    if (index > 0) {
+    if (index > 0 && !this.title()) {
+      this.messageService.add({
+        closable: true,
+        severity: "error",
+        summary: "No Title!",
+        detail: "Please add a title to proceed.",
+        life: 3000,
+      });
+      return;
     }
 
     this.activeStep.set(index);
@@ -195,7 +208,7 @@ export class CreatePostComponent {
     callback();
   }
 
-  onPublish() {
+  onPublishIconClick() {
     if (!this.content()) {
       this.messageService.add({
         closable: true,
@@ -208,5 +221,57 @@ export class CreatePostComponent {
     }
 
     this.showPublishDialog.set(true);
+  }
+
+  onPublishPost(showModal: boolean = false) {
+    const payload: PostCreateRequest = {
+      title: this.title(),
+      summary: this.summary(),
+      content: this.content(),
+    };
+
+    if (!this.thumbnailFile && showModal) {
+      // Ask for confirmation without thumbnail
+    }
+
+    if (!!this.thumbnailFile()) {
+      this.uploadService
+        .uploadAssets("thumbnails", this.thumbnailFile() as File)
+        .pipe(
+          switchMap((response) => {
+            payload.thumbnail = response[0];
+            return this._postPublishApi(payload).pipe(
+              tap((response) => this._handlePostResponse(response)),
+              catchError(this._handlePostError)
+            );
+          })
+        )
+        .subscribe();
+    } else {
+      this._postPublishApi(payload)
+        .pipe(
+          tap((response) => this._handlePostResponse(response)),
+          catchError(this._handlePostError)
+        )
+        .subscribe();
+    }
+  }
+
+  private _postPublishApi(payload: PostCreateRequest) {
+    return this.postService.publishPost(payload);
+  }
+
+  private _handlePostResponse(response: Post) {
+    this.messageService.add({
+      closable: true,
+      severity: "success",
+      summary: "Congratulations!",
+      detail: "Your post is successfully published.",
+      life: 3000,
+    });
+  }
+
+  private _handlePostError(error: any) {
+    return throwError(() => error);
   }
 }
