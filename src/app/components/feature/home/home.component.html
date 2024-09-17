@@ -1,0 +1,30 @@
+<header class="flex justify-between items-center py-2 px-3">
+  <span class="text-white flex items-center gap-x-1">
+    <img
+      class="size-8"
+      src="../../../../assets/images/share-sphere.svg"
+      alt="Share Sphere"
+    />
+    <i class="text-white montserrat-bold">ShareSphere</i>
+  </span>
+  @if (!searchbarOpened()) {
+    <p-button
+      icon="pi pi-search"
+      [rounded]="true"
+      severity="info"
+      (onClick)="toggleSearchbar()"
+    />
+  }
+
+  @if (searchbarOpened()) {
+    <div class="absolute left-0 top-0 w-full p-3 home-search">
+      <p-autoComplete
+        pAutoFocus
+        [autofocus]="true"
+        class="rounded text-sm"
+        placeholder="Search posts, people"
+        (onBlur)="toggleSearchbar()"
+      />
+    </div>
+  }
+</header>

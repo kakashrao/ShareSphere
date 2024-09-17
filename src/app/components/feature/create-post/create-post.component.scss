@@ -1,0 +1,36 @@
+.post-editor {
+  height: calc(100vh - 132px);
+}
+
+.custom-image-upload {
+  .p-messages {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: 14px;
+
+    svg {
+      width: 20px;
+    }
+  }
+}
+
+.post-action-dial {
+  .p-speeddial-direction-down {
+    right: 6px;
+    top: 4px;
+
+    svg {
+      width: 15px;
+    }
+
+    .p-speeddial-action {
+      width: 35px;
+      height: 35px;
+
+      svg {
+        width: 15px;
+      }
+    }
+  }
+}

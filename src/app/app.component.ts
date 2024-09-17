@@ -1,13 +1,19 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ViewEncapsulation } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
+
+import { ToastModule } from "primeng/toast";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [RouterOutlet, ToastModule],
+  templateUrl: "./app.component.html",
+  styleUrl: "./app.component.scss",
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
-  title = 'share-sphere';
+  constructor() {
+    const loader = document.getElementById("intialize-loader");
+    !!loader && (loader.style.display = "none");
+  }
 }

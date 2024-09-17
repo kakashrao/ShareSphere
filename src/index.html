@@ -1,13 +1,144 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>ShareSphere</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>ShareSphere</title>
+    <meta
+      name="description"
+      content="Connect, share, and engage with a vibrant community on our social media platform. Post updates, share your thoughts, and comment on what matters most to you. Join the conversation today!"
+    />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.png" />
+    <style>
+      .logo-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #121212; /* Dark background for dark mode */
+        margin: 0;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon {
+        width: 100px;
+        height: 100px;
+        animation: iconPulse 2s infinite;
+      }
+
+      @keyframes iconPulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .text {
+        text-align: center;
+        font-size: 14px;
+        color: #e0e0e0; /* Light color for dark mode */
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        margin-left: 10px;
+        margin-top: 30px;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 2px solid black; /* Cursor effect */
+        animation:
+          typing 3s steps(30, end) infinite,
+          blink-caret 0.75s step-end infinite;
+      }
+
+      /* Typing animation */
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      /* Blinking cursor */
+      @keyframes blink-caret {
+        from,
+        to {
+          border-color: transparent;
+        }
+        50% {
+          border-color: black;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <app-root></app-root>
+    <div class="logo-wrapper" id="intialize-loader">
+      <div class="flex flex-col justify-center items-center">
+        <div class="logo">
+          <svg viewBox="0 0 100 100" class="icon">
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="#00bcd4"
+              stroke="#004d40"
+              stroke-width="5"
+            />
+            <line
+              x1="30"
+              y1="30"
+              x2="70"
+              y2="30"
+              stroke="#ffffff"
+              stroke-width="5"
+            />
+            <line
+              x1="30"
+              y1="30"
+              x2="50"
+              y2="70"
+              stroke="#ffffff"
+              stroke-width="5"
+            />
+            <line
+              x1="70"
+              y1="30"
+              x2="50"
+              y2="70"
+              stroke="#ffffff"
+              stroke-width="5"
+            />
+            <line
+              x1="30"
+              y1="70"
+              x2="70"
+              y2="70"
+              stroke="#ffffff"
+              stroke-width="5"
+            />
+
+            <circle cx="30" cy="30" r="8" fill="#ffffff" />
+            <circle cx="70" cy="30" r="8" fill="#ffffff" />
+            <circle cx="30" cy="70" r="8" fill="#ffffff" />
+            <circle cx="70" cy="70" r="8" fill="#ffffff" />
+          </svg>
+        </div>
+        <!-- <p class="text">Loading...</p> -->
+      </div>
+    </div>
+  </body>
 </html>

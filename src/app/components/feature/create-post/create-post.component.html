@@ -1,0 +1,296 @@
+<section>
+  <header class="bg-slate-100 flex justify-between items-center p-2">
+    <div class="flex gap-2 items-center montserrat-bold">
+      <i class="pi pi-times" routerLink="/"></i>
+      <span class="text-base">Create Post</span>
+    </div>
+    <p-speedDial
+      [model]="actionItems"
+      direction="down"
+      class="post-action-dial"
+      buttonClassName="p-button-info w-8 h-8"
+      class="post-action-dial"
+    />
+  </header>
+  <p-editor styleClass="post-editor" [(ngModel)]="content" #postEditor>
+    <ng-template pTemplate="header">
+      <span class="ql-formats">
+        <select class="ql-size">
+          <option value="small"></option>
+          <!-- Note a missing, thus falsy value, is used to reset to default -->
+          <option selected></option>
+          <option value="large"></option>
+          <option value="huge"></option>
+        </select>
+        <select class="ql-font ql-picker"></select>
+      </span>
+      <span class="ql-formats">
+        <button type="button" class="ql-bold" aria-label="Bold"></button>
+        <button type="button" class="ql-italic" aria-label="Italic"></button>
+        <button
+          type="button"
+          class="ql-underline"
+          aria-label="Underline"
+        ></button>
+        <button type="button" class="ql-strike" aria-label="strike"></button>
+      </span>
+      <span class="ql-formats">
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+      </span>
+      <span class="ql-formats">
+        <button type="button" class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet" type="button"></button>
+        <select class="ql-align"></select>
+      </span>
+      <span class="ql-formats custom-formats">
+        <p-fileUpload
+          mode="basic"
+          name="files"
+          chooseIcon="pi pi-image"
+          [url]="imageApiUrl"
+          accept="image/*"
+          maxFileSize="2097152"
+          [auto]="true"
+          [multiple]="false"
+          chooseLabel=""
+          class="inline-block relative top-1 custom-image-upload"
+          styleClass="bg-green-100 text-green-900 p-1"
+          [style]="{
+            border: '0'
+          }"
+          (onBeforeUpload)="isLoading.set(true)"
+          (onError)="handleImageError($event)"
+          (onUpload)="handleImageUpload($event)"
+        />
+        <span
+          class="pi pi-link bg-purple-100 text-purple-900 px-2.5 py-2 ml-2 rounded"
+          (click)="openLinkOverlay(op, $event)"
+        ></span>
+      </span> </ng-template
+  ></p-editor>
+
+  @if (isLoading()) {
+    <div
+      class="absolute top-0 left-0 w-screen h-screen flex items-center justify-center backdrop-opacity-10 backdrop-invert bg-white/30"
+    >
+      <p-progressSpinner ariaLabel="loading" />
+    </div>
+  }
+
+  <p-toast position="bottom-center" />
+</section>
+
+<p-overlayPanel #op>
+  <div>
+    <div class="flex flex-col items-end gap-4">
+      <p-inputGroup>
+        <p-inputGroupAddon>
+          <i class="pi pi-link"></i>
+        </p-inputGroupAddon>
+        <input
+          pInputText
+          placeholder="type or paste the link here"
+          class="lato-regular text-base"
+          #linkInput
+        />
+      </p-inputGroup>
+      <button
+        pButton
+        pRipple
+        label="Add"
+        class="lato-bold py-1 px-5"
+        (click)="onAddLink(linkInput, op)"
+        [disabled]="!linkInput.value"
+      ></button>
+    </div>
+  </div>
+</p-overlayPanel>
+
+<p-dialog
+  header="Edit Profile"
+  [modal]="true"
+  (visibleChange)="showPublishDialog.set($event)"
+  [visible]="showPublishDialog()"
+  [style]="{
+    width: '25rem',
+    maxWidth: '95vw',
+    height: 'fit-content',
+    maxHeight: '90vh'
+  }"
+  [showHeader]="false"
+  contentStyleClass="px-2 py-4"
+>
+  <div>
+    <p-stepper [(activeStep)]="activeStep">
+      <p-stepperPanel>
+        <ng-template pTemplate="header" let-index="index">
+          <button
+            class="bg-transparent border-0 flex flex-col gap-2"
+            (click)="setActiveIndex(index)"
+          >
+            <span
+              class="rounded border-2 w-8 h-8 flex items-center justify-center"
+              [ngClass]="{
+                'bg-cyan-700 border-cyan-700 text-white': index <= activeStep(),
+                'surface-border': index > activeStep()
+              }"
+            >
+              <i class="pi pi-pencil"></i>
+            </span>
+          </button>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="flex gap-1">
+            <span>🖋️ </span>
+            <div>
+              <h5 class="text-sm montserrat-bold">Craft Your Title</h5>
+              <p class="text-xs lato=regular">
+                Your title is the first impression your post will make. Give it
+                a thoughtful touch!
+              </p>
+              <input
+                pInputText
+                id="username"
+                class="mt-4 w-full text-sm lato-regular"
+                placeholder="Enter your title here..."
+                [autofocus]="true"
+                [(ngModel)]="title"
+              />
+
+              <div class="flex flex-col gap-1 mt-6">
+                <label for="summary" class="text-sm montserrat-regular"
+                  >Summary <i>(optional)</i></label
+                >
+                <textarea
+                  id="summary"
+                  class="text-sm lato-regular"
+                  [style]="{ width: '100%', height: '80px' }"
+                  pInputTextarea
+                  [autoResize]="false"
+                  placeholder="Add a brief summary about the post..."
+                  [(ngModel)]="summary"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-2 mt-5">
+            <p-button
+              label="Close"
+              [text]="true"
+              severity="info"
+              styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+            />
+            <p-button
+              label="Next"
+              [raised]="true"
+              severity="info"
+              styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+            />
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+      <p-stepperPanel>
+        <ng-template pTemplate="header" let-index="index">
+          <button
+            class="bg-transparent border-0 flex flex-col gap-2"
+            (click)="setActiveIndex(index)"
+          >
+            <span
+              class="rounded border-2 w-8 h-8 flex items-center justify-center"
+              [ngClass]="{
+                'bg-cyan-700 border-cyan-700 text-white': index <= activeStep(),
+                'surface-border': index > activeStep()
+              }"
+            >
+              <i class="pi pi-image"></i>
+            </span>
+          </button>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div>
+            <p-fileUpload
+              accept="image/*"
+              maxFileSize="512000"
+              class="text-sm p-2 custom-image-upload"
+              [auto]="true"
+              [multiple]="false"
+              [customUpload]="true"
+              (uploadHandler)="uploadThumbnail($event)"
+              #thumbnailUpload
+            >
+              <ng-template
+                pTemplate="header"
+                let-files
+                let-chooseCallback="chooseCallback"
+                let-clearCallback="clearCallback"
+              >
+                <div
+                  class="flex flex-wrap justify-content-between align-items-center flex-1 gap-2"
+                >
+                  <div class="flex gap-2">
+                    <p-button
+                      (onClick)="chooseCallback()"
+                      icon="pi pi-images"
+                      [rounded]="true"
+                      [outlined]="true"
+                    />
+                    <p-button
+                      (onClick)="cancelThumbnail(clearCallback)"
+                      icon="pi pi-times"
+                      [rounded]="true"
+                      [outlined]="true"
+                      severity="danger"
+                      [disabled]="!files || files.length === 0"
+                    />
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="content">
+                @if (!thumbnail()) {
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="pi pi-image text-7xl"></span>
+                    <h5 class="text-sm montserrat-bold">
+                      Upload an eye-catching image
+                    </h5>
+                    <p class="text-xs lato=regular text-center">
+                      ✨ Your thumbnail is the first thing people will see -
+                      make it memorable!
+                    </p>
+                  </div>
+                } @else {
+                  <p-image
+                    [src]="thumbnail()"
+                    alt="thumbnail"
+                    [style]="{ width: '100%' }"
+                    [imageStyle]="{ width: '100%', height: '250px' }"
+                    [preview]="true"
+                  />
+                  <p-divider type="dashed" />
+                  <p class="text-xs lato-bold text-center mt-2">
+                    Looks fantastic! 🌟 Your thumbnail is now ready to go. 🚀
+                  </p>
+                }
+              </ng-template>
+              <ng-template pTemplate="file"> </ng-template>
+            </p-fileUpload>
+            <div class="flex items-center justify-end gap-2 mt-6">
+              <p-button
+                label="Back"
+                [text]="true"
+                severity="info"
+                styleClass="text-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              />
+              <p-button
+                label="Publish"
+                [raised]="true"
+                severity="info"
+                styleClass="bg-cyan-700 text-sm py-2 px-4 montserrat-bold"
+              />
+            </div>
+          </div>
+        </ng-template>
+      </p-stepperPanel>
+    </p-stepper>
+  </div>
+</p-dialog>

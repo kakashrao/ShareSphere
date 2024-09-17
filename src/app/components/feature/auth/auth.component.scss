@@ -1,0 +1,30 @@
+.auth-section {
+  &.login {
+    height: 400px;
+  }
+
+  &.signup {
+    height: 80vh;
+  }
+}
+
+.auth-form {
+  .p-password {
+    width: 100%;
+    height: 40px;
+  }
+
+  input,
+  .p-password-input {
+    width: 100%;
+    height: 40px;
+    border-width: 1px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .p-button {
+    width: 100%;
+    height: 100%;
+  }
+}
