@@ -1,5 +1,6 @@
+import { NgClass } from "@angular/common";
 import { Component, inject, signal, ViewEncapsulation } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { DialogService } from "primeng/dynamicdialog";
 import { Subscription } from "rxjs";
 import { AuthStore } from "../../store/auth.store";
@@ -19,6 +20,8 @@ type FeatureType = "HOME" | "FAVOURITES" | "POST" | "MESSAGES" | "PROFILE";
   templateUrl: "./landing.component.html",
   styleUrl: "./landing.component.scss",
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [RouterOutlet, NgClass],
   providers: [DialogService],
 })
 export class LandingComponent {

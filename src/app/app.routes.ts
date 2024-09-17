@@ -5,8 +5,8 @@ export const routes: Routes = [
   {
     path: "",
     loadChildren: () =>
-      import("./components/landing/landing.module").then(
-        (c) => c.LandingModule
+      import("./components/landing/landing.routes").then(
+        (c) => c.LandingRoutes
       ),
   },
   {

@@ -8,11 +8,12 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { MenuItem, MessageService } from "primeng/api";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DialogModule } from "primeng/dialog";
+import { DividerModule } from "primeng/divider";
 import { Editor, EditorModule } from "primeng/editor";
 import {
   FileUploadErrorEvent,
@@ -20,6 +21,7 @@ import {
   FileUploadHandlerEvent,
   FileUploadModule,
 } from "primeng/fileupload";
+import { ImageModule } from "primeng/image";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
@@ -52,11 +54,13 @@ import { UploadService } from "../../../services/upload/upload.service";
     ProgressSpinnerModule,
     ToastModule,
     RouterLink,
-    ReactiveFormsModule,
+    FormsModule,
     SpeedDialModule,
     DialogModule,
     StepperModule,
     NgClass,
+    ImageModule,
+    DividerModule,
   ],
   providers: [UploadService],
   templateUrl: "./create-post.component.html",
@@ -66,7 +70,11 @@ import { UploadService } from "../../../services/upload/upload.service";
 export class CreatePostComponent {
   private messageService = inject(MessageService);
   @ViewChild("postEditor") editor!: Editor;
-  editorControl = new FormControl<string>("");
+  content = model<string>("");
+  title = model<string>("");
+  summary = model<string>("");
+  thumbnail = signal<string>("");
+  thumbnailFile = signal<File | undefined>(undefined);
 
   imageApiUrl = `${environment.baseUrl}/api/assets/upload/posts`;
 
@@ -173,15 +181,32 @@ export class CreatePostComponent {
       const reader = new FileReader();
 
       reader.onload = (event: ProgressEvent) => {
-        console.log((event.target as FileReader).result);
+        this.thumbnail.set((event.target as FileReader).result as string);
       };
 
       reader.readAsDataURL(event.files[0]);
+      this.thumbnailFile.set(event.files[0]);
     }
   }
 
+  cancelThumbnail(callback: () => void) {
+    this.thumbnail.set("");
+    this.thumbnailFile.set(undefined);
+    callback();
+  }
+
   onPublish() {
-    console.log(this.editorControl.value);
+    if (!this.content()) {
+      this.messageService.add({
+        closable: true,
+        severity: "error",
+        summary: "No Content!",
+        detail: "Add some content to publish.",
+        life: 3000,
+      });
+      return;
+    }
+
     this.showPublishDialog.set(true);
   }
 }

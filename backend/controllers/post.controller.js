@@ -30,13 +30,7 @@ export const createPost = asyncHandler(async (req, res) => {
   if (savedPost) {
     res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          formatPost(savedPost),
-          "Post Created Successfully."
-        )
-      );
+      .json(new ApiResponse(200, null, "Post Created Successfully."));
   } else {
     throw new ApiError(500, "Failed to create post, please try again.");
   }
@@ -52,23 +46,18 @@ export const updatePost = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Post Id paramter is missing.");
   }
 
-  if (req?.files?.media) {
-    const result = [];
+  if (req?.files?.thumbnail) {
+    try {
+      const response = await uploadOnCloudinary(file.path, "thumbnails");
 
-    for (const file of req.files.media) {
-      try {
-        const response = await uploadOnCloudinary(file.path, "posts");
-        response?.url
-          ? result.push({
-              url: response?.url,
-              format: response?.format,
-              fileName: response?.original_filename,
-            })
-          : null;
-      } catch (error) {}
-    }
-
-    req.body.media = [...result];
+      req.body.thumbnail = {
+        url: response?.url,
+        format: response?.format,
+        fileName: response?.original_filename,
+      };
+    } catch (error) {}
+  } else {
+    post.thumbnail = req.body?.thumbnail ?? "";
   }
 
   const post = await Post.findOne({
@@ -80,8 +69,8 @@ export const updatePost = asyncHandler(async (req, res) => {
   }
 
   post.title = req.body?.title ?? "";
-  post.description = req.body?.description ?? "";
-  post.media = req.body?.media ?? [];
+  post.summary = req.body?.summary ?? "";
+  post.content = req?.body?.content ?? "";
 
   const updatedPost = await post.save();
   if (updatedPost) {
@@ -196,8 +185,9 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     {
       $project: {
         title: 1,
-        description: 1,
-        media: 1,
+        summary: 1,
+        thumbnail: 1,
+        content: 1,
         creator: 1,
         likes: 1,
         createdAt: 1,
@@ -297,8 +287,9 @@ export const getPostDetails = asyncHandler(async (req, res) => {
     {
       $project: {
         title: 1,
-        description: 1,
-        media: 1,
+        summary: 1,
+        thumbnail: 1,
+        content: 1,
         creator: 1,
         likes: 1,
         createdAt: 1,
@@ -344,8 +335,9 @@ const formatPost = (post) => {
   return {
     postId: post._id,
     title: post.title,
-    description: post.description,
-    media: post.media,
+    summary: post.summary,
+    content: post.content,
+    thumbnail: post.thumbnail,
     creator: post.creator,
     likes: post?.likes ?? 0,
     comments: post?.comments ?? 0,

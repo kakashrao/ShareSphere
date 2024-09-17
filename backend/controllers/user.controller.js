@@ -117,6 +117,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, data, "Successfully Logged Out."));
 });
 
+/** Not yet implemented */
 export const updateUser = async (req) => {
   if (req?.files?.profileImage?.[0]?.path) {
     const profileImage = await uploadOnCloudinary(
