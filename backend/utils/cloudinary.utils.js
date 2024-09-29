@@ -59,12 +59,12 @@ const deleteFromCloudinary = async (folder, filename) => {
   }
 };
 
-const uploadMultipleFilesToCloudinary = async (files) => {
+const uploadMultipleFilesToCloudinary = async (files, folder) => {
   const results = [];
 
   for (const file of files) {
     try {
-      const response = await uploadOnCloudinary(file.path, "posts");
+      const response = await uploadOnCloudinary(file.path, folder);
       response?.url
         ? results.push({
             url: response?.url,

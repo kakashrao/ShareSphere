@@ -10,7 +10,8 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { MenuItem, MessageService } from "primeng/api";
+import { ConfirmationService, MenuItem, MessageService } from "primeng/api";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ConfirmPopupModule } from "primeng/confirmpopup";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
@@ -34,7 +35,7 @@ import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
-import { catchError, switchMap, tap, throwError } from "rxjs";
+import { catchError, finalize, switchMap, tap, throwError } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Asset } from "../../../models/asset.model";
 import { Post, PostCreateRequest } from "../../../models/post.model";
@@ -64,8 +65,9 @@ import { UploadService } from "../../../services/upload/upload.service";
     NgClass,
     ImageModule,
     DividerModule,
+    ConfirmDialogModule,
   ],
-  providers: [UploadService],
+  providers: [UploadService, ConfirmationService],
   templateUrl: "./create-post.component.html",
   styleUrl: "./create-post.component.scss",
   encapsulation: ViewEncapsulation.None,
@@ -74,6 +76,7 @@ export class CreatePostComponent {
   private messageService = inject(MessageService);
   private uploadService = inject(UploadService);
   private postService = inject(PostService);
+  private confirmationService = inject(ConfirmationService);
   @ViewChild("postEditor") editor!: Editor;
   content = model<string>("");
   title = model<string>("");
@@ -84,6 +87,7 @@ export class CreatePostComponent {
   imageApiUrl = `${environment.baseUrl}/api/assets/upload/posts`;
 
   isLoading = signal<boolean>(false);
+  isPublishing = signal<boolean>(false);
   uploadedImages = signal<Asset[]>([]);
   showPublishDialog = signal(false);
   activeStep = model<number>(0);
@@ -223,15 +227,27 @@ export class CreatePostComponent {
     this.showPublishDialog.set(true);
   }
 
-  onPublishPost(showModal: boolean = false) {
+  onPublishPost(showModal: boolean = false, event: MouseEvent | null = null) {
     const payload: PostCreateRequest = {
       title: this.title(),
       summary: this.summary(),
       content: this.content(),
     };
 
-    if (!this.thumbnailFile && showModal) {
-      // Ask for confirmation without thumbnail
+    if (!this.thumbnailFile() && showModal) {
+      this.confirmationService.confirm({
+        target: (event as MouseEvent).target as EventTarget,
+        message: "Are you sure that you want to proceed without thumbnail?",
+        header: "Confirmation",
+        icon: "pi pi-exclamation-triangle",
+        acceptIcon: "none",
+        rejectIcon: "none",
+        rejectButtonStyleClass: "p-button-text",
+        accept: () => {
+          this.onPublishPost();
+        },
+      });
+      return;
     }
 
     if (!!this.thumbnailFile()) {
@@ -258,10 +274,14 @@ export class CreatePostComponent {
   }
 
   private _postPublishApi(payload: PostCreateRequest) {
-    return this.postService.publishPost(payload);
+    return this.postService.publishPost(payload).pipe(
+      tap(() => this.isPublishing.set(true)),
+      finalize(() => this.isPublishing.set(false))
+    );
   }
 
   private _handlePostResponse(response: Post) {
+    this.showPublishDialog.set(false);
     this.messageService.add({
       closable: true,
       severity: "success",
@@ -269,6 +289,15 @@ export class CreatePostComponent {
       detail: "Your post is successfully published.",
       life: 3000,
     });
+    this._reset();
+  }
+
+  private _reset() {
+    this.title.set("");
+    this.summary.set("");
+    this.content.set("");
+    this.thumbnail.set("");
+    this.thumbnailFile.set(undefined);
   }
 
   private _handlePostError(error: any) {

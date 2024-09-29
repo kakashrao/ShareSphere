@@ -9,10 +9,9 @@ import {
 export const uploadMedia = asyncHandler(async (req, res) => {
   const files = req.files;
   const folder = req.params.folder;
-  const result = [];
 
   if (files && files.length > 0) {
-    await uploadMultipleFilesToCloudinary(files);
+    const result = await uploadMultipleFilesToCloudinary(files, folder);
 
     res
       .status(201)
