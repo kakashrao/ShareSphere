@@ -1,0 +1,53 @@
+<p-card
+  header=""
+  subheader=""
+  [style]="{ width: '360px', maxWidth: '90vw', margin: 'auto' }"
+  id="post"
+>
+  <ng-template pTemplate="header">
+    @if (false) {
+      <img
+        [src]="
+          false
+            ? 'https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png'
+            : 'https://placehold.co/400?text=Hello+World&font=roboto'
+        "
+        [alt]="true ? 'Owner Icon' : 'Owner Icon'"
+        height="100"
+      />
+    }
+  </ng-template>
+  <div class="relative" [ngClass]="{ '-top-4': false, 'pt-2': true }">
+    @if (true) {
+      <p-avatar
+        image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+        label=""
+        styleClass="mr-2"
+        size="large"
+        shape="circle"
+      />
+    } @else {
+      <p-avatar
+        icon="pi pi-user"
+        styleClass="mr-2"
+        size="large"
+        shape="circle"
+        [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }"
+      />
+    }
+    <h5 class="montserrat-bold text-base">Hello</h5>
+    <p class="lato-regular text-sm">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa libero
+      molestias voluptas nihil impedit quia ad eveniet ab non tempore cum,
+      officiis doloremque ut, error totam perspiciatis voluptate quasi officia.
+    </p>
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="flex justify-between" [ngClass]="{ 'pt-3': true }">
+      <p class="text-sm lato-regular">By <i class="text-zinc-900">Akash</i></p>
+      <span class="lato-regular text-gray-700"
+        ><i class="pi pi-heart-fill text-red-700"></i> 100</span
+      >
+    </div>
+  </ng-template>
+</p-card>

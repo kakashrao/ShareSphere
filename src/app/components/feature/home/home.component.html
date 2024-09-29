@@ -28,3 +28,8 @@
     </div>
   }
 </header>
+<main id="posts" class="flex flex-col gap-4">
+  @for (item of [1, 2, 3]; track $index) {
+    <sp-post></sp-post>
+  }
+</main>

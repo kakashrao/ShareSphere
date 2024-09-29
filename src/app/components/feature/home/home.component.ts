@@ -2,11 +2,12 @@ import { Component, signal } from "@angular/core";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { AutoFocusModule } from "primeng/autofocus";
 import { ButtonModule } from "primeng/button";
+import { PostComponent } from "../post/post.component";
 
 @Component({
   selector: "sp-home",
   standalone: true,
-  imports: [AutoCompleteModule, AutoFocusModule, ButtonModule],
+  imports: [AutoCompleteModule, AutoFocusModule, ButtonModule, PostComponent],
   providers: [],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
