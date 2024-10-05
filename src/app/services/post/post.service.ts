@@ -10,7 +10,7 @@ import { Post, PostCreateRequest } from "../../models/post.model";
 export class PostService {
   private http = inject(HttpClient);
 
-  publishPost(payload: PostCreateRequest): Observable<Post> {
+  publishPost(payload: FormData | PostCreateRequest): Observable<Post> {
     return this.http
       .post<{ data: Post }>(`${environment.baseUrl}/api/post/create`, payload)
       .pipe(map((response) => response.data));

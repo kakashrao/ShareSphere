@@ -1,4 +1,5 @@
-import { ApiError } from "../utils/apiError.utils.js";
+import { Status } from "../constants/auth.constants.js";
+import { BadRequest } from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import {
@@ -14,27 +15,23 @@ export const uploadMedia = asyncHandler(async (req, res) => {
     const result = await uploadMultipleFilesToCloudinary(files, folder);
 
     res
-      .status(201)
-      .json(new ApiResponse(201, result, "Files uploaded successfully."));
+      .status(Status.Created)
+      .json(
+        new ApiResponse(Status.Created, result, "Files uploaded successfully.")
+      );
   } else {
-    res.status(400).json(new ApiError(400, "Please select a file."));
+    throw new BadRequest("Please select a file.");
   }
 });
 
 export const deleteMedia = asyncHandler(async (req, res) => {
-  if (!req.body || !req.body?.files) {
-    res.status(400).json(new ApiError(400, "Please provide the file(s)."));
-    return;
-  }
-
-  if (!Array.isArray(req.body.files)) {
-    res.status(400).json(new ApiError(400, "Invalid Request."));
-    return;
-  }
-
-  if (!req.body.files.length) {
-    res.status(400).json(new ApiError(400, "Please provide the file(s)."));
-    return;
+  if (
+    !req.body ||
+    !req.body?.files ||
+    !Array.isArray(req.body.files) ||
+    !req.body.files.length
+  ) {
+    throw new BadRequest("Please provide the file(s).");
   }
 
   const filesToDelete = req.body.files; // files contains the filenames list
@@ -46,5 +43,7 @@ export const deleteMedia = asyncHandler(async (req, res) => {
     } catch (error) {}
   }
 
-  res.status(200).json(new ApiResponse(200, {}, "Successfully Deleted."));
+  res
+    .status(Status.Ok)
+    .json(new ApiResponse(Status.Ok, {}, "Successfully Deleted."));
 });

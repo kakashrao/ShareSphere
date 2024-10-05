@@ -1,20 +1,29 @@
+import { Status } from "../constants/auth.constants.js";
 import Post from "../models/post.model.js";
-import { ApiError } from "../utils/apiError.utils.js";
+import {
+  ApiError,
+  BadRequest,
+  NotFound,
+  ServerError,
+} from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
 
 import mongoose from "mongoose";
+import { createPostSchema } from "../validators/schema/post.schema.js";
 
 // Create Post Method
 export const createPost = asyncHandler(async (req, res) => {
-  if (!req || !req.body) {
-    throw new ApiError(400, "Invalid Request.");
+  const { error } = createPostSchema.validate(req.body);
+
+  if (!!error) {
+    throw new BadRequest(error.message);
   }
 
-  if (req?.files?.thumbnail) {
+  if (req?.file) {
     try {
-      const response = await uploadOnCloudinary(file.path, "thumbnails");
+      const response = await uploadOnCloudinary(req.file.path, "thumbnails");
 
       req.body.thumbnail = {
         url: response?.url,
@@ -29,26 +38,26 @@ export const createPost = asyncHandler(async (req, res) => {
   const savedPost = await post.save();
   if (savedPost) {
     res
-      .status(200)
-      .json(new ApiResponse(200, null, "Post Created Successfully."));
+      .status(Status.Ok)
+      .json(new ApiResponse(Status.Ok, null, "Post Created Successfully."));
   } else {
-    throw new ApiError(500, "Failed to create post, please try again.");
+    throw new ServerError("Failed to create post, please try again.");
   }
 });
 
 // Update post method
 export const updatePost = asyncHandler(async (req, res) => {
   if (!req || !req.body) {
-    throw new ApiError(400, "Invalid Request.");
+    throw new BadRequest();
   }
 
   if (!req.params?.postId) {
-    throw new ApiError(400, "Post Id paramter is missing.");
+    throw new BadRequest("Post Id paramter is missing.");
   }
 
-  if (req?.files?.thumbnail) {
+  if (req?.file) {
     try {
-      const response = await uploadOnCloudinary(file.path, "thumbnails");
+      const response = await uploadOnCloudinary(req.file.path, "thumbnails");
 
       req.body.thumbnail = {
         url: response?.url,
@@ -65,7 +74,7 @@ export const updatePost = asyncHandler(async (req, res) => {
   });
 
   if (!post) {
-    throw new ApiError(400, "Could not find the post.");
+    throw new NotFound("Could not find the post.");
   }
 
   post.title = req.body?.title ?? "";
@@ -75,16 +84,16 @@ export const updatePost = asyncHandler(async (req, res) => {
   const updatedPost = await post.save();
   if (updatedPost) {
     res
-      .status(200)
+      .status(Status.Ok)
       .json(
         new ApiResponse(
-          200,
+          Status.Ok,
           formatPost(updatedPost),
           "Post Updated Successfully."
         )
       );
   } else {
-    throw new ApiError(500, "Failed to update post, please try again.");
+    throw new ServerError("Failed to update post, please try again.");
   }
 });
 

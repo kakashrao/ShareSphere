@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import handleError from "../utils/errorHandler.js";
 
 const thumbnailSchema = mongoose.Schema(
   {
@@ -14,7 +13,7 @@ const postSchema = mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Title is required."],
+      required: true,
     },
     summary: {
       type: String,
@@ -23,7 +22,7 @@ const postSchema = mongoose.Schema(
     content: {
       type: String,
       default: "",
-      required: [true, "Cannot publish empty post."],
+      required: true,
     },
     thumbnail: thumbnailSchema,
     creator: {
@@ -34,14 +33,6 @@ const postSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
-postSchema.post("save", (error, doc, next) => {
-  if (error) {
-    next(handleError(error));
-  } else {
-    next();
-  }
-});
 
 const Post = mongoose.model("Post", postSchema);
 

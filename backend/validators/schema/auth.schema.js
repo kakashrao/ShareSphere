@@ -19,16 +19,12 @@ const signUpSchema = Joi.object({
       )
     )
     .error((errors) => {
-      if (Array.isArray(errors)) {
-        if (errors.some((e) => e.code === "any.required")) {
-          return new Error("Password is required.");
-        } else if (errors.some((e) => e.code === "any.pattern")) {
-          return new Error(
-            "Password must contain atleast one uppercase letter, one lowercase letter, one number and one special symbol with 8 to 15 characters long."
-          );
-        } else {
-          return errors;
-        }
+      if (errors.some((e) => e.code === "any.required")) {
+        return new Error("Password is required.");
+      } else if (errors.some((e) => e.code === "any.pattern")) {
+        return new Error(
+          "Password must contain atleast one uppercase letter, one lowercase letter, one number and one special symbol with 8 to 15 characters long."
+        );
       } else {
         return errors;
       }

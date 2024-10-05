@@ -1,23 +1,25 @@
 import { SecurityConst } from "../constants.js";
-import { ApiError } from "../utils/apiError.utils.js";
+import { Unauthorized } from "../utils/apiError.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import { verifySecurityToken } from "../utils/security.utils.js";
 
 export const checkAuth = asyncHandler(async (req, res, next) => {
   if (
     req.cookies[SecurityConst.csrfTokenServer] !==
-      req.headers[SecurityConst.csrfTokenClient] &&
-    req.method !== "GET"
+    req.headers[SecurityConst.csrfTokenClient]
   ) {
-    res.status(401).json(new ApiError(401, "Authorization Failed"));
+    res
+      .status(Status.Unauthorized)
+      .json(new Unauthorized("Authorization Failed"));
     return;
   }
 
   const accessToken = req.cookies[SecurityConst.sessionId];
 
   if (!accessToken) {
-    res.status(401).json(new ApiError(401, "Authorization Failed"));
-    return;
+    return res
+      .status(Status.Unauthorized)
+      .json(new Unauthorized("Authorization Failed"));
   }
 
   const decodedToken = verifySecurityToken(accessToken);
@@ -31,8 +33,9 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     req.user = { ...user };
     next();
   } else {
-    res.status(401).json(new ApiError(401, "Authorization Failed"));
-    return;
+    return res
+      .status(Status.Unauthorized)
+      .json(new Unauthorized("Authorization Failed"));
   }
 });
 

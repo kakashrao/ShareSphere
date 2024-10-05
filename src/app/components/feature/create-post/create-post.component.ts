@@ -35,10 +35,10 @@ import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Range } from "quill";
 import Quill, { Delta } from "quill/core";
-import { catchError, finalize, switchMap, tap, throwError } from "rxjs";
+import { finalize, tap, throwError } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Asset } from "../../../models/asset.model";
-import { Post, PostCreateRequest } from "../../../models/post.model";
+import { Post } from "../../../models/post.model";
 import { PostService } from "../../../services/post/post.service";
 import { UploadService } from "../../../services/upload/upload.service";
 
@@ -228,12 +228,6 @@ export class CreatePostComponent {
   }
 
   onPublishPost(showModal: boolean = false, event: MouseEvent | null = null) {
-    const payload: PostCreateRequest = {
-      title: this.title(),
-      summary: this.summary(),
-      content: this.content(),
-    };
-
     if (!this.thumbnailFile() && showModal) {
       this.confirmationService.confirm({
         target: (event as MouseEvent).target as EventTarget,
@@ -250,34 +244,29 @@ export class CreatePostComponent {
       return;
     }
 
-    if (!!this.thumbnailFile()) {
-      this.uploadService
-        .uploadAssets("thumbnails", this.thumbnailFile() as File)
-        .pipe(
-          switchMap((response) => {
-            payload.thumbnail = response[0];
-            return this._postPublishApi(payload).pipe(
-              tap((response) => this._handlePostResponse(response)),
-              catchError(this._handlePostError)
-            );
-          })
-        )
-        .subscribe();
-    } else {
-      this._postPublishApi(payload)
-        .pipe(
-          tap((response) => this._handlePostResponse(response)),
-          catchError(this._handlePostError)
-        )
-        .subscribe();
-    }
-  }
+    const formData = new FormData();
+    formData.append("title", this.title());
+    formData.append("summary", this.summary());
+    formData.append("content", this.content());
 
-  private _postPublishApi(payload: PostCreateRequest) {
-    return this.postService.publishPost(payload).pipe(
-      tap(() => this.isPublishing.set(true)),
-      finalize(() => this.isPublishing.set(false))
-    );
+    if (!!this.thumbnailFile()) {
+      formData.append("thumbnail", this.thumbnailFile() as File);
+    }
+
+    this.postService
+      .publishPost(formData)
+      .pipe(
+        tap(() => this.isPublishing.set(true)),
+        finalize(() => this.isPublishing.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this._handlePostResponse(response);
+        },
+        error: (error) => {
+          this._handlePostError(error);
+        },
+      });
   }
 
   private _handlePostResponse(response: Post) {
