@@ -1,94 +1,104 @@
 import { ImageFormats, SecurityConst } from "../constants.js";
+import {
+  accessibleCookieOptions,
+  secureCookieOptions,
+  Status,
+} from "../constants/auth.constants.js";
 import User from "../models/user.model.js";
-import ApiError from "../utils/apiError.utils.js";
+import {
+  BadRequest,
+  NotFound,
+  ServerError,
+  Unauthorized,
+} from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
-import { createCsrfToken, createJWT } from "../utils/security.utils.js";
+import {
+  createCsrfToken,
+  generateSecurityTokens,
+} from "../utils/security.utils.js";
+import { signUpSchema } from "../validators/schema/auth.schema.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  if (!req || !req.body) {
-    throw new ApiError(400, "Bad Request.");
+  const { error } = signUpSchema.validate(req.body);
+
+  if (!!error) {
+    throw new BadRequest(error.message);
   }
 
-  const registeredUser = {
-    fullName: req.body?.name,
-    username: req.body?.username,
-    email: req.body?.email,
-    password: req?.body?.password,
-  };
-
-  const user = new User(registeredUser);
+  const user = new User(req.body);
 
   const createdUser = await user.save();
-  const accessToken = await createJWT(createdUser._id, createdUser.email);
+
+  const { accessToken, refreshToken } = await generateSecurityTokens(
+    createdUser._id,
+    createdUser.email
+  );
   const csrfToken = await createCsrfToken();
+
+  createdUser.refershToken = refreshToken;
+  await createdUser.save();
 
   const data = {
     ...formatUser(createdUser),
   };
 
-  const cookieOptions = process.env.COOKIE_OPTIONS;
-
-  res.status(200).cookie(SecurityConst.sessionId, accessToken, cookieOptions);
   res
-    .cookie(SecurityConst.csrfTokenServer, csrfToken, {
-      ...cookieOptions,
-      http: false,
-    })
-    .json(new ApiResponse(200, data, "Successfully registered."));
+    .cookie(SecurityConst.sessionId, accessToken, secureCookieOptions)
+    .cookie(SecurityConst.refreshId, refreshToken, secureCookieOptions)
+    .cookie(SecurityConst.csrfTokenServer, csrfToken, accessibleCookieOptions)
+    .json(new ApiResponse(Status.Ok, data, "Successfully registered."));
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  if (!req || !req.body) {
-    throw new ApiError(400, "Bad Request.");
-  }
-
-  if (!req.body?.id) {
-    throw new ApiError(400, "Please provide email or username.");
-  }
-
-  if (!req.body?.password) {
-    throw new ApiError(400, "Please provide a valid password.");
+  if (!req.body || !req.body?.id || !req.body?.password) {
+    throw new BadRequest();
   }
 
   const user = await User.findOne({
-    $or: [{ username: req.body?.id }, { email: req.body?.id }],
+    $or: [{ username: req.body.id }, { email: req.body.id }],
   });
 
-  if (user) {
+  if (!!user) {
     const isPasswordCorrect = await user.isPasswordCorrect(req.body.password);
 
     if (isPasswordCorrect) {
-      const accessToken = await createJWT(user._id, user.email);
+      const { accessToken, refreshToken } = await generateSecurityTokens(
+        user._id,
+        user.email
+      );
       const csrfToken = await createCsrfToken();
+
+      user.refreshToken = refreshToken;
+      await user.save();
 
       const data = {
         ...formatUser(user),
       };
 
-      const cookieOptions = process.env.COOKIE_OPTIONS;
-
       res
-        .status(200)
-        .cookie(SecurityConst.sessionId, accessToken, cookieOptions)
-        .cookie(SecurityConst.csrfTokenServer, csrfToken, {
-          ...cookieOptions,
-          http: false,
-        })
-        .json(new ApiResponse(200, data, "Successfully Logged In."));
+        .cookie(SecurityConst.sessionId, accessToken, secureCookieOptions)
+        .cookie(SecurityConst.refreshId, refreshToken, secureCookieOptions)
+        .cookie(
+          SecurityConst.csrfTokenServer,
+          csrfToken,
+          accessibleCookieOptions
+        )
+        .json(new ApiResponse(Status.Ok, data, "Successfully Logged In."));
     } else {
-      throw new ApiError(401, "username or password is invalid.");
+      throw new Unauthorized("username or password is invalid.");
     }
   } else {
-    throw new ApiError(404, "Account not found, please register yourself.");
+    throw new NotFound("Account not found, please register yourself.");
   }
 });
 
 export const getUserDetails = asyncHandler(async (req, res) => {
   if (!req?.user || !req?.user?.userId) {
-    res.status(204).json();
-    return;
+    return res
+      .status(Status.NoContent)
+      .json(new ApiResponse(Status.NoContent, null, "Not found."));
   }
 
   try {
@@ -99,20 +109,23 @@ export const getUserDetails = asyncHandler(async (req, res) => {
         ...formatUser(user),
       };
 
-      res.status(200).json(new ApiResponse(200, data, "Successfully fetched."));
+      res
+        .status(Status.Ok)
+        .json(new ApiResponse(Status.Ok, data, "Successfully fetched."));
     } else {
-      throw new ApiError(404, "User not found.");
+      throw new NotFound("User not found.");
     }
     return;
   } catch (error) {
-    throw new ApiError(500, "Failed to fetch user details.");
+    throw new ServerError();
   }
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
   res
-    .status(200)
+    .status(Status.Ok)
     .clearCookie(SecurityConst.sessionId)
+    .clearCookie(SecurityConst.refreshId)
     .clearCookie(SecurityConst.csrfTokenServer)
     .json(new ApiResponse(200, data, "Successfully Logged Out."));
 });

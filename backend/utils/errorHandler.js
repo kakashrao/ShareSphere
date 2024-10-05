@@ -1,5 +1,5 @@
 import mongoose, { MongooseError } from "mongoose";
-import ApiError from "./apiError.utils.js";
+import { ApiError } from "./apiError.utils.js";
 
 const handleError = (error) => {
   if (error instanceof MongooseError) {

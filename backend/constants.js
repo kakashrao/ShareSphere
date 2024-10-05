@@ -1,5 +1,6 @@
 export const SecurityConst = Object.freeze({
   sessionId: "SESSION-ID",
+  refreshId: "RSESSION-ID",
   csrfTokenClient: "x-csrf-token",
   csrfTokenServer: "XSRF-TOKEN",
 });

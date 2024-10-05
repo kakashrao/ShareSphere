@@ -13,26 +13,48 @@ export const signJwt = util.promisify(jwt.sign);
 const RSA_PRIVATE_KEY = fs.readFileSync("./keys/private.key");
 const RSA_PUBLIC_KEY = fs.readFileSync("./keys/public.key");
 
-const SESSION_DURATION = "1h";
+const SESSION_DURATION = "24h";
+const ACCESS_TOKEN_DURATION = "0.5h";
 
-const createJWT = async (userId, email) => {
-  return signJwt({ userId, email }, RSA_PRIVATE_KEY, {
+async function generateSecurityTokens(
+  userId,
+  email,
+  refreshTokenRequired = true
+) {
+  const accessToken = await signJwt({ userId, email }, RSA_PRIVATE_KEY, {
     algorithm: "RS256",
-    expiresIn: SESSION_DURATION,
+    expiresIn: ACCESS_TOKEN_DURATION,
   });
-};
 
-const verifyJWT = (token) => {
+  let refreshToken = null;
+
+  if (refreshTokenRequired) {
+    refreshToken = await signJwt({ userId, email }, RSA_PRIVATE_KEY, {
+      algorithm: "RS256",
+      expiresIn: ACCESS_TOKEN_DURATION,
+    });
+  }
+
+  return { accessToken, refreshToken };
+}
+
+function verifySecurityToken(token) {
   const payload = jwt.verify(token, RSA_PUBLIC_KEY);
   return payload;
-};
+}
 
-const createCsrfToken = async () => {
+async function createCsrfToken() {
   return await randomBytes(32).then((bytes) => bytes.toString("hex"));
-};
+}
 
 const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
-export { createCsrfToken, createJWT, isValidEmail, randomBytes, verifyJWT };
+export {
+  createCsrfToken,
+  generateSecurityTokens,
+  isValidEmail,
+  randomBytes,
+  verifySecurityToken,
+};

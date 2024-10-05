@@ -1,5 +1,5 @@
 import Comment from "../models/comment.model.js";
-import ApiError from "../utils/apiError.utils.js";
+import { ApiError } from "../utils/apiError.utils.js";
 import ApiResponse from "../utils/apiResponse.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
 

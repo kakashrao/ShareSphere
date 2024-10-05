@@ -1,7 +1,7 @@
 import { SecurityConst } from "../constants.js";
-import ApiError from "../utils/apiError.utils.js";
+import { ApiError } from "../utils/apiError.utils.js";
 import asyncHandler from "../utils/asyncHandler.utils.js";
-import { verifyJWT } from "../utils/security.utils.js";
+import { verifySecurityToken } from "../utils/security.utils.js";
 
 export const checkAuth = asyncHandler(async (req, res, next) => {
   if (
@@ -20,7 +20,7 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     return;
   }
 
-  const decodedToken = verifyJWT(accessToken);
+  const decodedToken = verifySecurityToken(accessToken);
 
   if (decodedToken) {
     const user = {
@@ -41,7 +41,7 @@ export const decodeTokenIfLogin = async (req, res, next) => {
 
   if (accessToken) {
     try {
-      const decodedToken = verifyJWT(accessToken);
+      const decodedToken = verifySecurityToken(accessToken);
 
       if (decodedToken) {
         const user = {

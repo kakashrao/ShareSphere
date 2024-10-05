@@ -1,37 +1,29 @@
 import mongoose from "mongoose";
 
 import argon2 from "argon2";
-import ApiError from "../utils/apiError.utils.js";
-import handleError from "../utils/errorHandler.js";
+import { ApiError } from "../utils/apiError.utils.js";
 
 const userSchema = mongoose.Schema(
   {
     username: {
       type: String,
-      required: [true, "Username is required."],
+      required: true,
       unique: true,
     },
     fullName: {
       type: String,
-      required: [true, "Full name is required."],
+      required: true,
     },
     email: {
       type: String,
-      required: [true, "Email is required."],
       unique: true,
-      validate: {
-        validator: function (v) {
-          return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v);
-        },
-        message: (props) => `${props.value} is not a valid email!`,
-      },
     },
     bio: {
       type: String,
     },
     password: {
       type: String,
-      required: [true, "Password is required."],
+      required: true,
     },
     profileImage: {
       type: String,
@@ -40,6 +32,9 @@ const userSchema = mongoose.Schema(
     coverImage: {
       type: String,
       default: "",
+    },
+    refreshToken: {
+      type: String,
     },
   },
   { timestamps: true }
@@ -59,22 +54,6 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await argon2.verify(this.password, password);
 };
-
-userSchema.post("save", (error, doc, next) => {
-  if (error?.name === "MongoServerError" && error?.code === 11000) {
-    if (error.keyValue["username"]) {
-      next(new ApiError(400, "User name already exists."));
-    } else if (error.keyValue["email"]) {
-      next(new ApiError(400, "Email already exists."));
-    } else {
-      next(new ApiError(500, "Something went wrong."));
-    }
-  } else if (error) {
-    next(handleError(error));
-  } else {
-    next();
-  }
-});
 
 const User = mongoose.model("User", userSchema);
 

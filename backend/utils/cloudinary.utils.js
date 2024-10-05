@@ -1,7 +1,7 @@
 import fs from "fs";
 
 import { v2 as cloudinary } from "cloudinary";
-import ApiError from "./apiError.utils.js";
+import { ApiError } from "./apiError.utils.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

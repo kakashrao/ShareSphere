@@ -17,17 +17,8 @@ app.use(express.static("./public"));
 app.use(cookieParser());
 
 // Routes Imports
-import commentRoutes from "./routes/comment.routes.js";
-import likeRoutes from "./routes/like.routes.js";
-import postRoutes from "./routes/post.routes.js";
-import uploadRoutes from "./routes/upload.routes.js";
-import userRoutes from "./routes/user.routes.js";
+import appRoutes from "./routes/app.routes.js";
 
-app.use("/api/user", userRoutes);
-app.use("/api/post", postRoutes);
-app.use("/api/comment", commentRoutes);
-app.use("/api/like", likeRoutes);
-
-app.use("/api/assets", uploadRoutes);
+app.use("/api", appRoutes);
 
 export default app;
