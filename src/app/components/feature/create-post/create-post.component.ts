@@ -93,10 +93,11 @@ export class CreatePostComponent {
   activeStep = model<number>(0);
 
   actionItems: MenuItem[] = [
-    { label: "Save", icon: "pi pi-save" },
+    { label: "Save", icon: "pi pi-save", styleClass: "bg-bright-orange" },
     {
       label: "Publish",
       icon: "pi pi-upload",
+      styleClass: "bg-bright-orange",
       command: this.onPublishIconClick.bind(this),
     },
   ];

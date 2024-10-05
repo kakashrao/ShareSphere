@@ -1,14 +1,17 @@
 <section>
-  <header class="bg-slate-100 flex justify-between items-center p-2">
-    <div class="flex gap-2 items-center montserrat-bold">
-      <i class="pi pi-times" routerLink="/"></i>
-      <span class="text-base">Create Post</span>
+  <header
+    class="bg-slate-100 flex justify-between items-center p-2 bg-primary"
+    id="post-header"
+  >
+    <div class="flex gap-2 items-center montserrat-bold text-primary">
+      <i class="pi pi-times close-icon" routerLink="/"></i>
+      <span class="text-bas">Create Post</span>
     </div>
     <p-speedDial
       [model]="actionItems"
       direction="down"
       class="post-action-dial"
-      buttonClassName="p-button-info w-8 h-8"
+      buttonClassName="p-button-info w-8 h-8 bg-bright-orange"
       class="post-action-dial"
     />
   </header>
@@ -24,25 +27,6 @@
         </select>
         <select class="ql-font ql-picker"></select>
       </span>
-      <span class="ql-formats">
-        <button type="button" class="ql-bold" aria-label="Bold"></button>
-        <button type="button" class="ql-italic" aria-label="Italic"></button>
-        <button
-          type="button"
-          class="ql-underline"
-          aria-label="Underline"
-        ></button>
-        <button type="button" class="ql-strike" aria-label="strike"></button>
-      </span>
-      <span class="ql-formats">
-        <select class="ql-color"></select>
-        <select class="ql-background"></select>
-      </span>
-      <span class="ql-formats">
-        <button type="button" class="ql-list" value="ordered"></button>
-        <button class="ql-list" value="bullet" type="button"></button>
-        <select class="ql-align"></select>
-      </span>
       <span class="ql-formats custom-formats">
         <p-fileUpload
           mode="basic"
@@ -54,7 +38,7 @@
           [auto]="true"
           [multiple]="false"
           chooseLabel=""
-          class="inline-block relative top-1 custom-image-upload"
+          class="inline-block custom-image-upload"
           styleClass="bg-green-100 text-green-900 p-1"
           [style]="{
             border: '0'
@@ -64,9 +48,28 @@
           (onUpload)="handleImageUpload($event)"
         />
         <span
-          class="pi pi-link bg-purple-100 text-purple-900 px-2.5 py-2 ml-2 rounded"
+          class="pi pi-link bg-purple-100 relative bottom-1 text-purple-900 px-2.5 py-2 ml-2 rounded link-icon"
           (click)="openLinkOverlay(op, $event)"
         ></span>
+      </span>
+      <span class="ql-formats mt-1">
+        <button type="button" class="ql-bold" aria-label="Bold"></button>
+        <button type="button" class="ql-italic" aria-label="Italic"></button>
+        <button
+          type="button"
+          class="ql-underline"
+          aria-label="Underline"
+        ></button>
+        <button type="button" class="ql-strike" aria-label="strike"></button>
+      </span>
+      <span class="ql-formats mt-1">
+        <select class="ql-color"></select>
+        <select class="ql-background"></select>
+      </span>
+      <span class="ql-formats mt-1">
+        <button type="button" class="ql-list" value="ordered"></button>
+        <button class="ql-list" value="bullet" type="button"></button>
+        <select class="ql-align"></select>
       </span> </ng-template
   ></p-editor>
 

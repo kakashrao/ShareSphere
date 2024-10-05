@@ -142,7 +142,23 @@ body {
 }
 
 .text-primary {
-  color: $primaryColor;
+  color: $primaryTextColor;
+}
+
+.bright-orange-text {
+  color: $brightOrange;
+}
+
+.dark-purple-text {
+  color: $lightDarkPurple;
+}
+
+.bg-dark-purple {
+  background-color: $lightDarkPurple;
+}
+
+.bg-bright-orange {
+  background-color: $brightOrange;
 }
 
 .border-primary {

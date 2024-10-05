@@ -1,5 +1,69 @@
 .post-editor {
-  height: calc(100vh - 132px);
+  height: calc(100vh - 121px);
+
+  .ql-snow {
+    &.ql-toolbar button.ql-active svg path,
+    &.ql-toolbar button.ql-active svg rect {
+      filter: invert(8%) sepia(20%) saturate(100%) hue-rotate(0deg)
+        brightness(102%) contrast(100%);
+    }
+
+    &.ql-toolbar button svg path,
+    &.ql-toolbar button svg rect {
+      filter: invert(8%) sepia(20%) saturate(100%) hue-rotate(0deg)
+        brightness(102%) contrast(100%);
+    }
+
+    &.ql-toolbar button,
+    &.ql-toolbar .ql-icon-picker .ql-picker-label {
+      background-color: #eaeaea;
+
+      &.ql-active {
+        background-color: #f7a400;
+      }
+    }
+
+    &.ql-toolbar .ql-color-picker .ql-picker-label {
+      background-color: #eaeaea;
+    }
+
+    & svg polygon {
+      filter: invert(46%) sepia(75%) saturate(1000%) hue-rotate(0deg)
+        brightness(107%) contrast(105%);
+    }
+  }
+
+  .p-editor-toolbar.ql-snow .ql-picker .ql-picker-label,
+  .ql-picker-options {
+    color: #eaeaea;
+  }
+
+  .ql-picker-label,
+  .ql-picker-options {
+    color: #eaeaea;
+  }
+
+  .p-editor-toolbar,
+  .p-editor-content .ql-editor {
+    background: #252546;
+  }
+
+  .p-editor-toolbar.ql-snow,
+  .p-editor-content.ql-snow {
+    border: 1px solid transparent;
+  }
+
+  .p-editor-toolbar.ql-snow {
+    border-bottom-color: #937dc2;
+  }
+
+  .p-editor-content .ql-editor {
+    color: #ffffff;
+  }
+}
+
+#post-header {
+  background-color: #1a1a2e;
 }
 
 .custom-image-upload {
@@ -13,6 +77,14 @@
       width: 20px;
     }
   }
+
+  .p-fileupload {
+    background-color: #dda0dd;
+  }
+}
+
+.link-icon {
+  background-color: #dda0dd;
 }
 
 .post-action-dial {
@@ -32,5 +104,9 @@
         width: 15px;
       }
     }
+  }
+
+  .p-speeddial-action {
+    background-color: #f7a400;
   }
 }
