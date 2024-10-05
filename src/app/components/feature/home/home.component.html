@@ -1,4 +1,7 @@
-<header class="flex justify-between items-center py-2 px-3">
+<header
+  class="flex justify-between items-center py-2 px-3 sticky top-0 z-10"
+  id="header"
+>
   <span class="text-white flex items-center gap-x-1">
     <img
       class="size-8"
@@ -9,7 +12,7 @@
   </span>
   @if (!searchbarOpened()) {
     <p-button
-      icon="pi pi-search"
+      icon="pi pi-search text-white"
       [rounded]="true"
       severity="info"
       (onClick)="toggleSearchbar()"
@@ -24,11 +27,12 @@
         class="rounded text-sm"
         placeholder="Search posts, people"
         (onBlur)="toggleSearchbar()"
+        [showClear]="true"
       />
     </div>
   }
 </header>
-<main id="posts" class="flex flex-col gap-4">
+<main id="posts" class="flex flex-col gap-4 pb-4 pt-2">
   @for (item of [1, 2, 3]; track $index) {
     <sp-post></sp-post>
   }

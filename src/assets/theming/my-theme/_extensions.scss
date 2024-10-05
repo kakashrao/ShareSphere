@@ -1,0 +1,12 @@
+/* Customizations to the designer theme should be defined here */
+@layer primeng {
+  .p-card {
+    background: $customCardBg;
+    color: $primaryTextColor;
+    box-shadow: $customCardShadow;
+
+    .p-card-subtitle {
+      color: $secondaryTextColor;
+    }
+  }
+}

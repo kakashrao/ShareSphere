@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import "./assets/theming/my-theme/theme.scss";
 
 @layer tailwind-base, primeng, tailwind-utilities;
 
@@ -92,7 +93,7 @@ body {
   box-sizing: border-box;
   font-family: Lato, sans-serif;
   font-weight: 400;
-  background-color: #333;
+  background-color: #1a1a2e;
 }
 
 .lato-regular {
@@ -138,6 +139,18 @@ body {
 .montserrat-regular {
   font-family: Montserrat, sans-serif;
   font-weight: 400;
+}
+
+.text-primary {
+  color: $primaryColor;
+}
+
+.border-primary {
+  border: 1px solid $primaryHightlightColor;
+}
+
+.bg-primary {
+  background-color: $primaryColor;
 }
 
 .home-search {

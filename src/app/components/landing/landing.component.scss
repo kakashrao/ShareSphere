@@ -1,7 +1,15 @@
+footer {
+  background-color: #1a1a2e;
+  border: 1px solid #937dc2;
+}
+
 .feature-button {
   transition: transform 0.1s ease-in;
+  color: #ffb84d;
 
   &.active {
-    transform: scale(1.2) translateY(-10px);
+    transform: scale(1) translateY(-4px);
+    background-color: #f7a400;
+    color: #f0f0f0;
   }
 }
