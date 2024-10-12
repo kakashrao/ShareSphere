@@ -21,15 +21,26 @@
         <label class="montserrat-regular text-sm mandatory-fill"
           >Username or Email</label
         >
-        <input
-          type="text"
-          placeholder="Enter your username or email"
-          aria-labelledby="Login Id"
-          pAutoFocus
-          [autofocus]="true"
-          pInputText
-          formControlName="id"
-        />
+        <div>
+          <input
+            type="text"
+            placeholder="Enter your username or email"
+            aria-labelledby="Login Id"
+            pAutoFocus
+            [autofocus]="true"
+            pInputText
+            formControlName="id"
+          />
+          @if (
+            loginForm.dirty &&
+            loginForm.controls["id"].touched &&
+            !loginForm.controls["id"].value
+          ) {
+            <small class="text-red-700">
+              Please enter a valid username or email.
+            </small>
+          }
+        </div>
       </div>
       <div class="flex flex-col gap-2 w-full text-sm">
         <label class="montserrat-regular mandatory-fill">Password</label>
@@ -39,13 +50,13 @@
           [toggleMask]="true"
           [feedback]="false"
           formControlName="password"
+          (keyup.enter)="handleUserLogin()"
         />
       </div>
 
       <p-button
         [label]="isLoading() ? 'Submitting...' : 'Submit'"
         class="w-full h-10 rounded flex items-center justify-center bg-cyan-700 text-white montserrat-bold"
-        [disabled]="!loginForm.valid"
         (onClick)="isLoading() ? null : handleUserLogin()"
       />
     </form>

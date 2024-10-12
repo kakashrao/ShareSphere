@@ -1,5 +1,12 @@
 import { JsonPipe, NgClass } from "@angular/common";
-import { Component, inject, signal, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -13,9 +20,7 @@ import { DialogService, DynamicDialogRef } from "primeng/dynamicdialog";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { PasswordModule } from "primeng/password";
-import { finalize } from "rxjs";
 import {
-  User,
   UserLoginRequest,
   UserRegistrationRequest,
 } from "../../../models/user.model";
@@ -48,13 +53,38 @@ export class AuthComponent {
   private messageService = inject(MessageService);
   blockSpace: RegExp = /[^s]/;
 
-  isLoading = signal<boolean>(false);
+  isLoading = computed<boolean>(() => {
+    return this.authStore.isLoading() && !this.authStore.error();
+  });
+
   mode = signal<AuthMode>("LOGIN");
 
   registerForm!: FormGroup;
   loginForm!: FormGroup;
 
   constructor() {
+    effect(() => {
+      if (this.mode() === "SIGNUP" && this.authStore.isLoggedIn()) {
+        this.messageService.add({
+          key: "root",
+          severity: "success",
+          summary: `Hey ${this.authStore.fullName()}!`,
+          detail: `Ready to make your feed fabulous? Let’s get started!`,
+          life: 3000,
+        });
+        this.close();
+      } else if (this.mode() === "LOGIN" && this.authStore.isLoggedIn()) {
+        this.messageService.add({
+          key: "root",
+          severity: "success",
+          summary: `Welcome back, ${this.authStore.fullName()}!`,
+          detail: `Ready to conquer the feed again? 🎉`,
+          life: 3000,
+        });
+        this.close();
+      }
+    });
+
     this._prepareForm();
   }
 
@@ -104,47 +134,17 @@ export class AuthComponent {
   }
 
   handleUserRegistration() {
-    this.isLoading.set(true);
-
     const payload = this.registerForm.value as UserRegistrationRequest;
-
-    this.authStore
-      .register(payload)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (response: User) => {
-          this.messageService.add({
-            key: "root",
-            severity: "success",
-            summary: `Hey ${payload.name}!`,
-            detail: `Ready to make your feed fabulous? Let’s get started!`,
-            life: 3000,
-          });
-          this.close();
-        },
-      });
+    this.authStore.register(payload);
   }
 
   handleUserLogin() {
-    this.isLoading.set(true);
+    if (!this.loginForm.valid) {
+      return;
+    }
 
     const payload = this.loginForm.value as UserLoginRequest;
-
-    this.authStore
-      .login(payload)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (response: User) => {
-          this.messageService.add({
-            key: "root",
-            severity: "success",
-            summary: `Welcome back, ${response.fullName}!`,
-            detail: `Ready to conquer the feed again? 🎉`,
-            life: 3000,
-          });
-          this.close();
-        },
-      });
+    this.authStore.login(payload);
   }
 
   close() {

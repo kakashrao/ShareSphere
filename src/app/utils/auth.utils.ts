@@ -1,14 +1,19 @@
 import { inject } from "@angular/core";
-import { finalize } from "rxjs";
 import { AuthStore } from "../store/auth.store";
 
 export function loadApplication(authStore: any) {
   return () => {
+    let interval: ReturnType<typeof setInterval> | undefined;
+
     return new Promise<void>((resolve, reject) => {
-      authStore
-        .getUserDetails()
-        .pipe(finalize(() => resolve()))
-        .subscribe();
+      authStore.getUserDetails();
+
+      interval = setInterval(() => {
+        if (authStore.isCompleted() || !!authStore.error()) {
+          resolve();
+          clearInterval(interval);
+        }
+      }, 1000);
     });
   };
 }
