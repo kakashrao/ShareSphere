@@ -12,10 +12,10 @@ export const Status = Object.freeze({
 
 export const secureCookieOptions = {
   secure: true,
-  http: true,
+  httpOnly: true,
 };
 
 export const accessibleCookieOptions = {
   secure: true,
-  http: false,
+  httpOnly: false,
 };

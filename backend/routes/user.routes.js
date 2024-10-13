@@ -3,6 +3,7 @@ import {
   getUserDetails,
   loginUser,
   logoutUser,
+  refreshAccessToken,
   registerUser,
 } from "../controllers/user.controller.js";
 
@@ -17,6 +18,7 @@ router.route("/register").post(registerUser);
 
 router.route("/login").put(loginUser);
 router.route("/logout").put(checkAuth, logoutUser);
+router.route("/refreshToken").put(refreshAccessToken);
 
 router.route("/me").get(decodeTokenIfLogin, getUserDetails);
 

@@ -3,6 +3,7 @@ export const SecurityConst = Object.freeze({
   refreshId: "RSESSION-ID",
   csrfTokenClient: "x-csrf-token",
   csrfTokenServer: "XSRF-TOKEN",
+  tokenExpiredMsg: "TOKEN_EXPIRED",
 });
 
 export const dateFormat = "YYYY-MM-DD";

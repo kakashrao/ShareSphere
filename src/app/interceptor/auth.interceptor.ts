@@ -1,22 +1,46 @@
-import { HttpErrorResponse, HttpInterceptorFn } from "@angular/common/http";
-import { inject } from "@angular/core";
+import {
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+} from "@angular/common/http";
+import { inject, signal } from "@angular/core";
 import { MessageService } from "primeng/api";
-import { catchError, throwError } from "rxjs";
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  switchMap,
+  take,
+  throwError,
+} from "rxjs";
+import { AuthService } from "../services/auth/auth.service";
 import { AuthStore } from "../store/auth.store";
+
+const isRefreshing = signal(false);
+const refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<
+  string | null
+>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const messageService = inject(MessageService);
   const authStore = inject(AuthStore);
+  const authService = inject(AuthService);
 
   return next(req).pipe(
-    catchError((error: any) => handleError(error, messageService, authStore))
+    catchError((error) =>
+      handleError(error, req, next, authStore, messageService, authService)
+    )
   );
 };
 
 function handleError(
   error: any,
+  req: HttpRequest<any>,
+  next: HttpHandlerFn,
+  authStore: any,
   messageService: MessageService,
-  authStore: any
+  authService: AuthService
 ) {
   let message = "Something went wrong";
 
@@ -32,6 +56,14 @@ function handleError(
             summary: "Error",
             detail: message,
           });
+        } else if (message === "TOKEN_EXPIRED") {
+          return handleTokenExpirationError(
+            authStore,
+            messageService,
+            authService,
+            req,
+            next
+          );
         } else {
           localStorage.clear();
           authStore.logout();
@@ -60,5 +92,37 @@ function handleError(
     });
   }
 
-  return throwError({ ...error, message });
+  return throwError(() => ({ ...error, message }));
+}
+
+function handleTokenExpirationError(
+  authStore: any,
+  messageService: MessageService,
+  authService: AuthService,
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+) {
+  if (!isRefreshing()) {
+    isRefreshing.set(true);
+    refreshTokenSubject.next(null);
+
+    return authService.updateAccessToken().pipe(
+      switchMap((token: any) => {
+        isRefreshing.set(false);
+        refreshTokenSubject.next("REFRESHED");
+        return next(req);
+      }),
+      catchError((error) => {
+        isRefreshing.set(false);
+        handleError(error, req, next, authStore, messageService, authService);
+        return throwError(() => error);
+      })
+    );
+  } else {
+    return refreshTokenSubject.pipe(
+      filter((token) => token != null),
+      take(1),
+      switchMap((token) => next(req))
+    );
+  }
 }

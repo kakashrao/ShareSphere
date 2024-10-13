@@ -8,18 +8,13 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     req.cookies[SecurityConst.csrfTokenServer] !==
     req.headers[SecurityConst.csrfTokenClient]
   ) {
-    res
-      .status(Status.Unauthorized)
-      .json(new Unauthorized("Authorization Failed"));
-    return;
+    throw new Unauthorized("Authorization Failed");
   }
 
   const accessToken = req.cookies[SecurityConst.sessionId];
 
   if (!accessToken) {
-    return res
-      .status(Status.Unauthorized)
-      .json(new Unauthorized("Authorization Failed"));
+    throw new Unauthorized("Authorization Failed");
   }
 
   const decodedToken = verifySecurityToken(accessToken);
@@ -33,9 +28,7 @@ export const checkAuth = asyncHandler(async (req, res, next) => {
     req.user = { ...user };
     next();
   } else {
-    return res
-      .status(Status.Unauthorized)
-      .json(new Unauthorized("Authorization Failed"));
+    throw new Unauthorized("Authorization Failed");
   }
 });
 

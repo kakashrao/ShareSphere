@@ -44,4 +44,11 @@ export class AuthService {
         })
       );
   }
+
+  updateAccessToken(): Observable<void> {
+    return this.http.put<void>(
+      `${environment.baseUrl}/api/user/refreshToken`,
+      {}
+    );
+  }
 }

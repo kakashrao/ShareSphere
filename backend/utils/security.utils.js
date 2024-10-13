@@ -4,6 +4,8 @@ import util from "util";
 import crypto from "crypto";
 
 import jwt from "jsonwebtoken";
+import { SecurityConst } from "../constants.js";
+import { Unauthorized } from "./apiError.utils.js";
 
 const randomBytes = util.promisify(crypto.randomBytes);
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -23,7 +25,7 @@ async function generateSecurityTokens(
 ) {
   const accessToken = await signJwt({ userId, email }, RSA_PRIVATE_KEY, {
     algorithm: "RS256",
-    expiresIn: ACCESS_TOKEN_DURATION,
+    expiresIn: 60,
   });
 
   let refreshToken = null;
@@ -31,7 +33,7 @@ async function generateSecurityTokens(
   if (refreshTokenRequired) {
     refreshToken = await signJwt({ userId, email }, RSA_PRIVATE_KEY, {
       algorithm: "RS256",
-      expiresIn: ACCESS_TOKEN_DURATION,
+      expiresIn: SESSION_DURATION,
     });
   }
 
@@ -39,8 +41,16 @@ async function generateSecurityTokens(
 }
 
 function verifySecurityToken(token) {
-  const payload = jwt.verify(token, RSA_PUBLIC_KEY);
-  return payload;
+  try {
+    const payload = jwt.verify(token, RSA_PUBLIC_KEY);
+    return payload;
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new jwt.TokenExpiredError(SecurityConst.tokenExpiredMsg);
+    } else {
+      throw new Unauthorized(error?.message ?? "Invalid token");
+    }
+  }
 }
 
 async function createCsrfToken() {

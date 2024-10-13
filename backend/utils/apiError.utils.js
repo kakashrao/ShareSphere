@@ -1,3 +1,5 @@
+import { Status } from "../constants/auth.constants.js";
+
 export class ApiError {
   constructor(
     statusCode,

@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { ImageFormats, SecurityConst } from "../constants.js";
 import {
   accessibleCookieOptions,
@@ -6,6 +7,7 @@ import {
 } from "../constants/auth.constants.js";
 import User from "../models/user.model.js";
 import {
+  ApiError,
   BadRequest,
   NotFound,
   ServerError,
@@ -17,6 +19,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
 import {
   createCsrfToken,
   generateSecurityTokens,
+  verifySecurityToken,
 } from "../utils/security.utils.js";
 import { signUpSchema } from "../validators/schema/auth.schema.js";
 
@@ -128,6 +131,47 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie(SecurityConst.refreshId)
     .clearCookie(SecurityConst.csrfTokenServer)
     .json(new ApiResponse(200, data, "Successfully Logged Out."));
+});
+
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies[SecurityConst.refreshId];
+
+  if (refreshToken) {
+    try {
+      const decodedToken = verifySecurityToken(refreshToken);
+      const user = await User.findById(decodedToken?.userId);
+
+      if (!user) {
+        throw new Unauthorized("Invalid credentials, please login again.");
+      }
+
+      if (user.refreshToken !== refreshToken) {
+        throw new Unauthorized("Refresh token is expired or used.");
+      }
+
+      const { accessToken } = await generateSecurityTokens(
+        user._id,
+        user.email,
+        false
+      );
+
+      res
+        .status(Status.Ok)
+        .cookie(SecurityConst.sessionId, accessToken, secureCookieOptions)
+        .json(new ApiResponse(Status.Ok, {}, "Successfully updated."));
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new Unauthorized("Session expired, please login again.");
+      } else {
+        throw new ApiError(
+          error?.status ?? 401,
+          error?.message ?? "Invalid token, please login again."
+        );
+      }
+    }
+  } else {
+    throw new Unauthorized("Please login or signup to continue.");
+  }
 });
 
 /** Not yet implemented */
