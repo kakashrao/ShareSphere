@@ -25,7 +25,7 @@ async function generateSecurityTokens(
 ) {
   const accessToken = await signJwt({ userId, email }, RSA_PRIVATE_KEY, {
     algorithm: "RS256",
-    expiresIn: 60,
+    expiresIn: ACCESS_TOKEN_DURATION,
   });
 
   let refreshToken = null;
